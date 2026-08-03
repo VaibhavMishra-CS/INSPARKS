@@ -31,18 +31,42 @@ function setFlagged(mode, key, value) {
   writeMap(`${mode}_flagged`, f);
 }
 
+// ========================================================================
+// TRACKING IF WORD WAS EVER MARKED (for red color state)
+// ========================================================================
+function getReviewedWords(mode) { return readMap(`${mode}_reviewed`); }
+function setReviewedWord(mode, key, value) {
+  const reviewed = getReviewedWords(mode);
+  if (value) {
+    reviewed[key] = true;
+  } else {
+    delete reviewed[key];
+  }
+  writeMap(`${mode}_reviewed`, reviewed);
+}
+
 function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+// ========================================================================
+// DAILY PROGRESS — Count only CURRENTLY mastered words (green)
+// Green - Red = Total tracked
+// ========================================================================
+function calculateDailyProgress(mode) {
+  // Count only words currently mastered (green)
+  const mastered = getMastered(mode);
+  const greenCount = Object.keys(mastered).length;
+  
+  return {
+    date: todayStr(),
+    count: greenCount
+  };
+}
+
 function getDailyProgress(mode) {
-  const raw = JSON.parse(localStorage.getItem(`${mode}_daily`) || 'null');
-  if (!raw || raw.date !== todayStr()) return { date: todayStr(), count: 0 };
-  return raw;
+  // Always recalculate based on current mastered words
+  return calculateDailyProgress(mode);
 }
-function incrementDaily(mode) {
-  const d = getDailyProgress(mode);
-  d.count += 1;
-  localStorage.setItem(`${mode}_daily`, JSON.stringify(d));
-  return d;
-}
+
 function getDailyGoal(mode) { return parseInt(localStorage.getItem(`${mode}_goal`) || '15', 10); }
 function setDailyGoal(mode, value) { localStorage.setItem(`${mode}_goal`, String(value)); }
 
@@ -152,13 +176,31 @@ function renderGrid() {
   grid.innerHTML = '';
   const start = (currentPage - 1) * PAGE_SIZE;
   const pageItems = filteredEntries.slice(start, start + PAGE_SIZE);
+  const mastered = getMastered(currentMode);
+  const reviewed = getReviewedWords(currentMode);
 
   pageItems.forEach((entry) => {
     const globalIndex = filteredEntries.indexOf(entry);
     const label = currentMode === 'vocab' ? entry.word : entry.character;
+    const key = getWordKey(currentMode, entry);
+    const isMastered = !!mastered[key];
+    const wasReviewed = !!reviewed[key];
+    
     const card = document.createElement('button');
     card.className = 'word-card';
+    card.setAttribute('data-word-id', key);
     card.textContent = label;
+    
+    // ✅ Color logic:
+    // GREEN = currently marked as mastered
+    // RED = was marked but now unmarked
+    // NO COLOR = never marked
+    if (isMastered) {
+      card.classList.add('known');
+    } else if (wasReviewed && !isMastered) {
+      card.classList.add('unknown');
+    }
+    
     card.addEventListener('click', () => openDetail(globalIndex));
     grid.appendChild(card);
   });
@@ -223,7 +265,10 @@ function renderFlashcard() {
   const entry = filteredEntries[currentCardIndex];
   const mastered = getMastered(currentMode);
   const flagged = getFlagged(currentMode);
+  const reviewed = getReviewedWords(currentMode);
   const key = getWordKey(currentMode, entry);
+  const isMastered = !!mastered[key];
+  const wasReviewed = !!reviewed[key];
 
   document.getElementById('card-level-badge').textContent = entry.level;
   document.getElementById('card-position').textContent = `Word ${currentCardIndex + 1} of ${filteredEntries.length}`;
@@ -272,9 +317,21 @@ function renderFlashcard() {
 
   document.getElementById('flag-btn').classList.toggle('active', !!flagged[key]);
   const knowBtn = document.getElementById('know-word-btn');
-  const isMastered = !!mastered[key];
   knowBtn.classList.toggle('active', isMastered);
   knowBtn.textContent = isMastered ? '✓ Mastered' : '✓ I know this word';
+  
+  // ✅ Set data attribute
+  knowBtn.setAttribute('data-word-id', key);
+  
+  // ✅ Apply color classes based on mastered state:
+  // GREEN = currently mastered
+  // RED = was marked but now unmarked
+  knowBtn.classList.remove('known', 'unknown');
+  if (isMastered) {
+    knowBtn.classList.add('known');
+  } else if (wasReviewed && !isMastered) {
+    knowBtn.classList.add('unknown');
+  }
 
   document.getElementById('prev-word-btn').disabled = currentCardIndex <= 0;
   document.getElementById('next-word-btn').disabled = currentCardIndex >= filteredEntries.length - 1;
@@ -300,25 +357,39 @@ document.getElementById('know-word-btn').addEventListener('click', () => {
   const key = getWordKey(currentMode, entry);
   const mastered = getMastered(currentMode);
   const wasMastered = !!mastered[key];
+  
+  // Toggle mastered state
   setMastered(currentMode, key, !wasMastered);
-  if (!wasMastered) {
-    incrementDaily(currentMode);
-    renderDailyGoal();
-  }
+  
+  // ✅ Track that this word was reviewed (for red color)
+  setReviewedWord(currentMode, key, true);
+  
+  // ✅ Re-render daily goal (it recalculates based on current mastered count)
+  // Formula: Count all currently green words = tracker number
+  renderDailyGoal();
+  
   renderFlashcard();
+  renderGrid(); // ✅ Re-render grid to show color changes
 });
 
 // SCROLL (read-only list)
 function renderScrollList() {
   const list = document.getElementById('scroll-list');
   list.innerHTML = '';
+  const mastered = getMastered(currentMode);
+  const reviewed = getReviewedWords(currentMode);
   document.getElementById('scroll-count').textContent = `${filteredEntries.length} of ${allEntries.length} words`;
 
   filteredEntries.forEach((entry, i) => {
     const label = currentMode === 'vocab' ? entry.word : entry.character;
     const meaning = (entry.meanings || [])[0] || '';
+    const key = getWordKey(currentMode, entry);
+    const isMastered = !!mastered[key];
+    const wasReviewed = !!reviewed[key];
+    
     const row = document.createElement('div');
     row.className = 'scroll-row';
+    row.setAttribute('data-word-id', key);
     row.innerHTML = `
       <span class="scroll-index">#${i + 1}</span>
       <span class="scroll-level"></span>
@@ -329,6 +400,16 @@ function renderScrollList() {
     row.querySelector('.scroll-level').textContent = entry.level;
     row.querySelector('.scroll-word').textContent = label;
     row.querySelector('.scroll-meaning').textContent = meaning;
+    
+    // ✅ Apply color classes based on mastered state:
+    // GREEN = currently mastered
+    // RED = was marked but now unmarked
+    if (isMastered) {
+      row.classList.add('known');
+    } else if (wasReviewed && !isMastered) {
+      row.classList.add('unknown');
+    }
+    
     list.appendChild(row);
   });
 }
