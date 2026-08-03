@@ -7,6 +7,144 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  #signin-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+  }
+
+  #signin-modal {
+    background: #16161a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 32px;
+    width: 100%;
+    max-width: 360px;
+    position: relative;
+    color: #fff;
+    text-align: center;
+    font-family: inherit;
+  }
+
+  #signin-modal h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+
+  #signin-modal p {
+    margin: 0 0 20px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+  }
+
+  #signin-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  #signin-modal-close:hover {
+    color: #fff;
+  }
+
+  .signin-provider-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #fff;
+    color: #16161a;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .signin-provider-btn:hover {
+    background: #f0f0f0;
+  }
+
+  .signin-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    margin: 4px 0 16px;
+  }
+
+  .signin-divider::before,
+  .signin-divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .signin-divider span {
+    padding: 0 10px;
+  }
+
+  #signin-email-form input {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #0d0d0f;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  #signin-email-form input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .signin-email-btn {
+    background: #4f8cff;
+    color: #fff;
+    border: none;
+  }
+
+  .signin-email-btn:hover {
+    background: #3d78e6;
+  }
+
+  #signin-toggle-mode {
+    font-size: 13px;
+    margin: 4px 0 0;
+  }
+
+  #signin-toggle-mode a {
+    color: #4f8cff;
+    text-decoration: none;
+  }
+
+  #signin-toggle-mode a:hover {
+    text-decoration: underline;
+  }
+
+  #signin-modal-error {
+    color: #ff6b6b;
+    font-size: 13px;
+    margin: 12px 0 0;
+    min-height: 16px;
+  }
+</style>
 </head>
 <body>
 
@@ -38,8 +176,8 @@
   <section class="hero">
     <div class="wrap">
       <div class="eyebrow">JLPT N5 → N1</div>
-      <h1><span class="placeholder">Learn Japanese the way that actually <span class="accent-word">sticks</span>."]</span></h1>
-      <p class="subhead"><span class="placeholder">[Insparks makes japanese easier and fun through its modules,simplistic game which &amp; adapts to weak spots, and tracks progress across JLPT levels.]</span></p>
+      <h1><span class="placeholder">Learn Japanese the way that actually <span class="accent-word">sticks</span>.</span></h1>
+      <p class="subhead"><span class="placeholder">Insparks makes japanese easier and fun through its modules,simplistic game which adapts to weak spots, and tracks progress across JLPT levels.</span></p>
       <div class="hero-cta">
         <button class="btn btn-primary btn-lg get-started-btn">Start learning free</button>
         <a href="#features" class="btn btn-ghost btn-lg">See how it works</a>
@@ -202,27 +340,27 @@
         <div class="level-card">
           <div class="badge">N5</div>
           <h4>Beginner</h4>
-          <p class="placeholder">[X] kanji · [X] vocab</p>
+          <p class="placeholder">90 kanji · 690 vocab</p>
         </div>
         <div class="level-card">
           <div class="badge">N4</div>
           <h4>Elementary</h4>
-          <p class="placeholder">[X] kanji · [X] vocab</p>
+          <p class="placeholder">180 kanji · 660 vocab</p>
         </div>
         <div class="level-card">
           <div class="badge">N3</div>
           <h4>Intermediate</h4>
-          <p class="placeholder">[X] kanji · [X] vocab</p>
+          <p class="placeholder">390 kanji · 1800 vocab</p>
         </div>
         <div class="level-card">
           <div class="badge">N2</div>
           <h4>Upper-intermediate</h4>
-          <p class="placeholder">[X] kanji · [X] vocab</p>
+          <p class="placeholder">390 kanji · 1800 vocab</p>
         </div>
         <div class="level-card">
           <div class="badge">N1</div>
           <h4>Advanced</h4>
-          <p class="placeholder">[X] kanji · [X] vocab</p>
+          <p class="placeholder">1260 kanji · 3480 vocab</p>
         </div>
       </div>
     </div>
@@ -237,15 +375,15 @@
       <div class="faq-list reveal">
         <div class="faq-item open">
           <button class="faq-question">How does the game decide what to show me? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">[Answer — explain your adaptive/spaced-repetition logic]</p></div>
+          <div class="faq-answer"><p class="placeholder">Answer — The game tracks the real time progress and adjusts according to the games,flashcards and the words you've marked known, which results what to show to the user.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-question">Do I need to know hiragana/katakana first? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">[Answer]</p></div>
+          <div class="faq-answer"><p class="placeholder">Answer — No, The libraries have the hiragana and katakana to learn from. It is recommended to start from their before moving on to more advanced content.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-question">Is this free? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">[Answer]</p></div>
+          <div class="faq-answer"><p class="placeholder">Answer — Yes, the basic version is free to use, but there are premium features available for purchase.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-question">How do I join the community? <span class="icon">+</span></button>
@@ -269,7 +407,7 @@
       <div class="footer-grid">
         <div>
           <div class="logo placeholder">INSPARKS</div>
-          <p class="placeholder">[Tagline]</p>
+          <p class="placeholder">Learning a language is fun and difficult at the same time because it requires consistency and discipline. We help with the content and tools to make your learning journey enjoyable and addictive, but the rest is upto you.</p>
         </div>
         <div class="footer-col">
           <h5>Platform</h5>
@@ -324,5 +462,6 @@
 </div>
 
 <script src="main.js"></script>
+<script type="module" src="landing.js"></script>
 </body>
 </html>

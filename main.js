@@ -2,12 +2,9 @@ const landing = document.getElementById('landing');
 const levelSelect = document.getElementById('levelSelect');
 const gameUI = document.getElementById('gameUI');
 
-document.querySelectorAll('.get-started-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Redirect to dashboard.html
-    window.location.href = 'dashboard.html';
-  });
-});
+// Sign-in for "Get Started" buttons is handled by landing.js —
+// it opens the sign-in modal and redirects to dashboard.html
+// only after a successful login.
 
 function loadGame(level) {
   console.log("Selected level: " + level);

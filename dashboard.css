@@ -1,15 +1,15 @@
 /* ==========================================================================
-   DASHBOARD TOKENS (extends style.css — link both files)
+   DASHBOARD TOKENS — Light Theme (Crackd.it inspired)
    ========================================================================== */
 :root {
-  --shoji-paper:     #F5ECDA;
-  --shoji-paper-dim: #EADFC7;
-  --shoji-wood:      #C9A876;
-  --shoji-wood-dark: #8B6B43;
-  --shoji-ink:       #3A2E22;
-  --shoji-ink-soft:  #6B5A44;
-  --shoji-glow:      #BFE3F5;
-  --shoji-glow-bright: #EAF7FC;
+  --shoji-paper:     #FFFFFF;
+  --shoji-paper-dim: #F8F6F3;
+  --shoji-wood:      #D4CEC4;
+  --shoji-wood-dark: #B5ADA0;
+  --shoji-ink:       #1A1410;
+  --shoji-ink-soft:  #6B6359;
+  --shoji-glow:      #1FA89F;
+  --shoji-glow-bright: #E0F8F6;
 }
 
 body.dashboard-body { background: var(--bg); }
@@ -45,11 +45,11 @@ body.dashboard-body { background: var(--bg); }
 .sidebar-logo .mark {
   width: 26px; height: 26px;
   border-radius: 7px;
-  background: linear-gradient(135deg, var(--n5), var(--n2));
+  background: linear-gradient(135deg, #10A876, #1FA89F);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-mono);
   font-size: 11px;
-  color: #05060A;
+  color: #fff;
   font-weight: 700;
 }
 
@@ -140,20 +140,20 @@ body.dashboard-body { background: var(--bg); }
 .mistake-num { font-family: var(--font-mono); font-size: 24px; font-weight: 700; }
 .mistake-num span { font-size: 14px; color: var(--text-tertiary); font-weight: 400; }
 
-/* GAME LAUNCHER — shoji-paper panel, warm/light contrast inside dark shell */
+/* GAME LAUNCHER — shoji-paper panel, warm/light contrast inside light shell */
 .game-launcher {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   min-height: 460px;
-  box-shadow: 0 0 0 1px var(--border), 0 30px 60px -20px rgba(191, 227, 245, 0.12);
+  box-shadow: 0 0 0 1px var(--border), 0 30px 60px -20px rgba(31, 168, 159, 0.08);
 }
 
 .shoji-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 45%, rgba(255,255,255,0.55), transparent 45%),
+    radial-gradient(circle at 50% 45%, rgba(255,255,255,0.8), transparent 45%),
     repeating-linear-gradient(
       90deg,
       var(--shoji-wood) 0px, var(--shoji-wood) 10px,
@@ -170,7 +170,7 @@ body.dashboard-body { background: var(--bg); }
   content: '';
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 90px 20px rgba(58, 46, 34, 0.18);
+  box-shadow: inset 0 0 90px 20px rgba(26, 20, 16, 0.08);
 }
 
 .launcher-content {
@@ -186,7 +186,7 @@ body.dashboard-body { background: var(--bg); }
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  background: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.6);
   backdrop-filter: blur(2px);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
@@ -202,7 +202,7 @@ body.dashboard-body { background: var(--bg); }
 .hub-ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(58, 46, 34, 0.28);
+  border: 1px solid rgba(26, 20, 16, 0.15);
   pointer-events: none;
 }
 .hub-ring.ring-1 { inset: -22px; animation: pulse-ring 2.6s ease-out infinite; }
@@ -232,8 +232,8 @@ body.dashboard-body { background: var(--bg); }
 .node-icon {
   width: 46px; height: 46px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(58, 46, 34, 0.15);
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(26, 20, 16, 0.12);
   display: flex; align-items: center; justify-content: center;
   font-size: 19px;
 }
@@ -283,7 +283,7 @@ body.dashboard-body { background: var(--bg); }
   height: 120px;
   border-radius: var(--radius-sm);
   background:
-    radial-gradient(circle at 50% 30%, rgba(139,124,246,0.35), transparent 60%),
+    radial-gradient(circle at 50% 30%, rgba(31, 168, 159, 0.15), transparent 60%),
     linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
   border: 1px solid var(--border);
 }

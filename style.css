@@ -1,33 +1,33 @@
 /* ==========================================================================
-   DESIGN TOKENS
+   DESIGN TOKENS — Light Theme (Crackd.it inspired)
    ========================================================================== */
 :root {
-  /* surfaces */
-  --bg:            #0A0C10;
-  --bg-elevated:   #12151C;
-  --bg-card:       #171B24;
-  --bg-card-hover: #1D2230;
-  --border:        #232833;
-  --border-bright: #34394A;
+  /* surfaces — LIGHT THEME */
+  --bg:            #FFFFFF;
+  --bg-elevated:   #F8F6F3;
+  --bg-card:       #F2EFE9;
+  --bg-card-hover: #EBE7E0;
+  --border:        #D4CEC4;
+  --border-bright: #C5BDB2;
 
-  /* text */
-  --text-primary:   #F2F4F8;
-  --text-secondary: #9AA3B2;
-  --text-tertiary:  #5C6474;
+  /* text — DARK TEXT ON LIGHT BG */
+  --text-primary:   #1A1410;
+  --text-secondary: #6B6359;
+  --text-tertiary:  #9B9389;
 
-  /* accents */
-  --accent:         #6C5CE7;
-  --accent-bright:  #8B7CF6;
-  --accent-gold:    #FFB020;
-  --accent-green:   #33D17A;
-  --accent-red:     #FF5C7A;
+  /* accents — Updated to match crackd.it's teal/turquoise */
+  --accent:         #1FA89F;
+  --accent-bright:  #16B7AB;
+  --accent-gold:    #FFB300;
+  --accent-green:   #10A876;
+  --accent-red:     #E74C3C;
 
   /* JLPT level gradient */
-  --n5: #33D17A;
-  --n4: #4FD1C5;
-  --n3: #4F9DFF;
-  --n2: #8B7CF6;
-  --n1: #B14FFF;
+  --n5: #10A876;
+  --n4: #1FA89F;
+  --n3: #3BA5C4;
+  --n2: #6B5BA8;
+  --n1: #C65D3D;
 
   /* type */
   --font-display: 'Sora', sans-serif;
@@ -93,9 +93,7 @@ h1, h2, h3, h4 {
 }
 
 .placeholder {
-  outline: 1px dashed var(--accent-gold);
-  outline-offset: 3px;
-  border-radius: 4px;
+  /* outline removed */
 }
 
 /* BUTTONS */
@@ -120,7 +118,7 @@ h1, h2, h3, h4 {
 }
 .btn-primary:hover {
   background: var(--accent-bright);
-  box-shadow: 0 8px 24px -6px rgba(108, 92, 231, 0.55);
+  box-shadow: 0 8px 24px -6px rgba(31, 168, 159, 0.35);
 }
 
 .btn-ghost {
@@ -137,7 +135,7 @@ h1, h2, h3, h4 {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
-  background: rgba(10, 12, 16, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   border-bottom: 1px solid var(--border);
 }
 .navbar .wrap {
@@ -157,11 +155,11 @@ h1, h2, h3, h4 {
 .navbar .logo .mark {
   width: 26px; height: 26px;
   border-radius: 7px;
-  background: linear-gradient(135deg, var(--n5), var(--n2));
+  background: linear-gradient(135deg, #10A876, #1FA89F);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-mono);
   font-size: 11px;
-  color: #05060A;
+  color: #fff;
   font-weight: 700;
 }
 .navbar .nav-links {
@@ -189,8 +187,8 @@ h1, h2, h3, h4 {
   inset: -20% -10% auto -10%;
   height: 620px;
   background:
-    radial-gradient(circle at 30% 20%, rgba(108,92,231,0.22), transparent 55%),
-    radial-gradient(circle at 75% 10%, rgba(79,157,255,0.15), transparent 50%);
+    radial-gradient(circle at 30% 20%, rgba(31, 168, 159, 0.12), transparent 55%),
+    radial-gradient(circle at 75% 10%, rgba(59, 165, 196, 0.1), transparent 50%);
   pointer-events: none;
   z-index: -1;
 }
@@ -200,7 +198,7 @@ h1, h2, h3, h4 {
   margin: 0 auto 20px;
 }
 .hero h1 .accent-word {
-  background: linear-gradient(120deg, var(--n5), var(--n3), var(--n1));
+  background: linear-gradient(120deg, #1FA89F, #10A876, #3BA5C4);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -383,7 +381,7 @@ h1, h2, h3, h4 {
   .community-grid { grid-template-columns: 1fr; }
 }
 
-/* LEVELS (replaces pricing tiers) */
+/* LEVELS */
 .levels { padding: 20px 0 100px; }
 .level-grid {
   display: grid;
@@ -405,7 +403,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 15px;
-  color: #05060A;
+  color: #fff;
 }
 .level-card:nth-child(1) .badge { background: var(--n5); }
 .level-card:nth-child(2) .badge { background: var(--n4); }

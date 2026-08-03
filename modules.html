@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INSPARKS — Books</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="modules.css">
+</head>
+<body class="dashboard-body">
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="mark">語</span> <span class="placeholder">INSPARKS</span></div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Home</a>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Learn</div>
+        <a class="nav-item active" href="modules.html"><span class="nav-icon">📚</span> Books</a>
+        <a class="nav-item" href="grammar.html"><span class="nav-icon">文</span> Grammar</a>
+        <a class="nav-item" href="vocab.html"><span class="nav-icon">言</span> Vocab</a>
+        <a class="nav-item" id="nav-kanji" href="vocab.html?mode=kanji"><span class="nav-icon">字</span> Kanji</a>
+        <a class="nav-item" href="reading.html"><span class="nav-icon">📖</span> Reading</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Practice</div>
+        <a class="nav-item" href="mocks.html"><span class="nav-icon">📝</span> Mocks</a>
+        <a class="nav-item" href="review.html"><span class="nav-icon">🔁</span> Review</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Progress</div>
+        <a class="nav-item" href="stats.html"><span class="nav-icon">📊</span> Stats</a>
+        <a class="nav-item" href="tracker.html"><span class="nav-icon">📈</span> Tracker</a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="avatar"></div>
+        <div>
+          <div class="user-name placeholder">[USERNAME]</div>
+          <div class="user-plan">Free</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dashboard-main">
+
+    <div class="modules-header">
+      <h1>Books</h1>
+      
+      <!-- BADGE TRACKER - TOP RIGHT CORNER (Single Bubble) -->
+      <div class="badge-tracker-container">
+        <div class="badge-tracker">
+          <span class="badge-pill tier-platinum"><span class="badge-icon">🗡️</span> <span id="count-platinum">0</span></span>
+          <span class="badge-pill tier-gold"><span class="badge-icon">⛩️</span> <span id="count-gold">0</span></span>
+          <span class="badge-pill tier-silver"><span class="badge-icon">☁️</span> <span id="count-silver">0</span></span>
+          <span class="badge-pill tier-bronze"><span class="badge-icon">🍜</span> <span id="count-bronze">0</span></span>
+          <button class="badge-info-btn" onclick="toggleBadgeInfo()">ℹ️</button>
+        </div>
+        <div class="badge-tooltip" id="badgeTooltip">
+          <p><strong>Earn badges for each module by taking its practice.</strong></p>
+          <div class="badge-tooltip-row"><span class="badge-icon">🗡️</span> <strong>Platinum</strong> 100% accuracy</div>
+          <div class="badge-tooltip-row"><span class="badge-icon">⛩️</span> <strong>Gold</strong> 80%+ accuracy</div>
+          <div class="badge-tooltip-row"><span class="badge-icon">☁️</span> <strong>Silver</strong> 60%+ accuracy</div>
+          <div class="badge-tooltip-row"><span class="badge-icon">🍜</span> <strong>Bronze</strong> 40%+ accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE CARDS GRID - 3 IN A ROW -->
+    <div class="module-grid">
+
+      <!-- NUMBERS -->
+      <div class="module-card" data-module="numbers">
+        <div class="module-card-head">
+          <h3>Numbers</h3>
+          <div class="module-tier-badge" id="tier-badge-numbers"></div>
+        </div>
+        <div class="module-meta">30 qs · counting basics</div>
+
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-label">ACCURACY</span>
+            <span class="module-stat-value" id="accuracy-numbers">—</span>
+            <div class="dot-track" id="accuracy-dots-numbers"></div>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-label">COMPLETED</span>
+            <span class="module-stat-value" id="completed-numbers">0/∞</span>
+            <div class="dot-track" id="completed-dots-numbers"></div>
+          </div>
+        </div>
+
+        <!-- ATTEMPTED / CORRECT TRACKING -->
+        <div class="module-tracking">
+          <div class="tracking-stat">
+            <span class="tracking-label">Attempted</span>
+            <span class="tracking-value" id="attempted-numbers">0</span>
+          </div>
+          <div class="tracking-stat">
+            <span class="tracking-label">Correct</span>
+            <span class="tracking-value tracking-correct" id="correct-numbers">0</span>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="btn btn-secondary" onclick="openReadModal('numbers')">Read</button>
+          <button class="btn btn-primary" onclick="openPracticeModal('numbers')">Practice</button>
+          <button class="module-chevron" id="chevron-numbers" onclick="toggleSpecifics('numbers')" aria-label="Show specifics">⌄</button>
+        </div>
+
+        <div class="module-specifics" id="specifics-numbers" style="display:none;">
+          <div class="specifics-item"><span class="specifics-dot"></span> Romaji for counting</div>
+          <div class="specifics-item"><span class="specifics-dot"></span> Japanese counting basics</div>
+          <div class="specifics-item"><span class="specifics-dot"></span> Kanji for counting</div>
+        </div>
+      </div>
+
+      <!-- HIRAGANA -->
+      <div class="module-card" data-module="hiragana">
+        <div class="module-card-head">
+          <h3>Hiragana</h3>
+          <div class="module-tier-badge" id="tier-badge-hiragana"></div>
+        </div>
+        <div class="module-meta">46 characters · gojuon table</div>
+
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-label">ACCURACY</span>
+            <span class="module-stat-value" id="accuracy-hiragana">—</span>
+            <div class="dot-track" id="accuracy-dots-hiragana"></div>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-label">COMPLETED</span>
+            <span class="module-stat-value" id="completed-hiragana">0/∞</span>
+            <div class="dot-track" id="completed-dots-hiragana"></div>
+          </div>
+        </div>
+
+        <!-- ATTEMPTED / CORRECT TRACKING -->
+        <div class="module-tracking">
+          <div class="tracking-stat">
+            <span class="tracking-label">Attempted</span>
+            <span class="tracking-value" id="attempted-hiragana">0</span>
+          </div>
+          <div class="tracking-stat">
+            <span class="tracking-label">Correct</span>
+            <span class="tracking-value tracking-correct" id="correct-hiragana">0</span>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="btn btn-secondary" onclick="openReadModal('hiragana')">Read</button>
+          <button class="btn btn-primary" onclick="openPracticeModal('hiragana')">Practice</button>
+          <button class="module-chevron" id="chevron-hiragana" onclick="toggleSpecifics('hiragana')" aria-label="Show specifics">⌄</button>
+        </div>
+
+        <div class="module-specifics" id="specifics-hiragana" style="display:none;">
+          <div class="specifics-item"><span class="specifics-dot"></span> Full hiragana gojuon table</div>
+          <div class="specifics-item"><span class="specifics-dot"></span> Romaji readings</div>
+          <div class="specifics-item"><span class="specifics-dot"></span> Character recognition practice</div>
+        </div>
+      </div>
+
+      <!-- KATAKANA -->
+      <div class="module-card" data-module="katakana">
+        <div class="module-card-head">
+          <h3>Katakana</h3>
+          <div class="module-tier-badge" id="tier-badge-katakana"></div>
+        </div>
+        <div class="module-meta">46 characters · gojuon table</div>
+
+        <div class="module-stats">
+          <div class="module-stat">
+            <span class="module-stat-label">ACCURACY</span>
+            <span class="module-stat-value" id="accuracy-katakana">—</span>
+            <div class="dot-track" id="accuracy-dots-katakana"></div>
+          </div>
+          <div class="module-stat">
+            <span class="module-stat-label">COMPLETED</span>
+            <span class="module-stat-value" id="completed-katakana">0/∞</span>
+            <div class="dot-track" id="completed-dots-katakana"></div>
+          </div>
+        </div>
+
+        <!-- ATTEMPTED / CORRECT TRACKING -->
+        <div class="module-tracking">
+          <div class="tracking-stat">
+            <span class="tracking-label">Attempted</span>
+            <span class="tracking-value" id="attempted-katakana">0</span>
+          </div>
+          <div class="tracking-stat">
+            <span class="tracking-label">Correct</span>
+            <span class="tracking-value tracking-correct" id="correct-katakana">0</span>
+          </div>
+        </div>
+
+        <div class="module-actions">
+          <button class="btn btn-secondary" onclick="openReadModal('katakana')">Read</button>
+          <button class="btn btn-primary" onclick="openPracticeModal('katakana')">Practice</button>
+          <button class="module-chevron" id="chevron-katakana" onclick="toggleSpecifics('katakana')" aria-label="Show specifics">⌄</button>
+        </div>
+
+        <div class="module-specifics" id="specifics-katakana" style="display:none;">
+          <div class="specifics-item"><span class="specifics-dot"></span> Full katakana gojuon table</div>
+          <div class="specifics-item"><span class="specifics-dot"></span> Romaji readings</div>
+          <div class="specifics-item"><span class="specifics-dot"></span> Character recognition practice</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- PRACTICE MODAL (MCQ) -->
+<div id="practiceModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="practiceModalTitle">Practice</h2>
+      <button class="modal-close" onclick="closeModal('practiceModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="mcqContainer">
+        <p>Loading…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- READ MODAL -->
+<div id="readModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="readModalTitle">Read</h2>
+      <button class="modal-close" onclick="closeModal('readModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="readModalBody">
+        <p>Loading…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="modules.js"></script>
+</body>
+</html>
