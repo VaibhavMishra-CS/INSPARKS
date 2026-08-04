@@ -1,21 +1,19 @@
 {
-  "name": "my-japanese-game",
+  "name": "insparks-japanese",
   "version": "1.0.0",
-  "description": "Creating an japanese vocab/Kanji game which helps improve people their language while having fun.",
-  "main": "index.js",
+  "description": "Learn Japanese the way that actually sticks",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/VaibhavMishra-CS/MY-JAPANESE-GAME.git"
+  "dependencies": {
+    "firebase": "^10.13.0",
+    "lucide-react": "^0.383.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/VaibhavMishra-CS/MY-JAPANESE-GAME/issues"
-  },
-  "homepage": "https://github.com/VaibhavMishra-CS/MY-JAPANESE-GAME#readme"
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^5.0.0"
+  }
 }
