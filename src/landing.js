@@ -1,7 +1,7 @@
 // landing.js - Final version with correct imports
 import { signInWithGoogle, signInWithEmail, signUpWithEmail, watchAuthState } from "./auth.js";
 
-const DASHBOARD_URL = "dashboard.html";
+const DASHBOARD_URL = "/dashboard.html";
 
 // ---- Build sign-in modal ----
 function buildModal() {
