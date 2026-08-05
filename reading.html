@@ -1,76 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INSPARKS — Reading</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./src/style.css">
-<link rel="stylesheet" href="./src/dashboard.css">
-<link rel="stylesheet" href="./src/coming-soon.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INSPARKS — Reading Practice</title>
+    <link rel="stylesheet" href="./src/style.css">
 </head>
-<body class="dashboard-body">
-
-<div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <!-- SIDEBAR (same as dashboard.html) -->
-  <aside class="sidebar">
-    <div class="sidebar-logo"><span class="mark">語</span> <span class="placeholder">INSPARKS</span></div>
-
-    <nav class="sidebar-nav">
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Home</a>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Learn</div>
-        <a class="nav-item" href="modules.html"><span class="nav-icon">📚</span> Books</a>
-        <a class="nav-item" href="grammar.html"><span class="nav-icon">文</span> Grammar</a>
-        <a class="nav-item" id="nav-vocab" href="vocab.html?mode=vocab"><span class="nav-icon">言</span> Vocab</a>
-        <a class="nav-item" id="nav-kanji" href="vocab.html?mode=kanji"><span class="nav-icon">字</span> Kanji</a>
-        <a class="nav-item" href="reading.html"><span class="nav-icon">📖</span> Reading</a>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Practice</div>
-        <a class="nav-item" href="mocks.html"><span class="nav-icon">📝</span> Mocks</a>
-        <a class="nav-item" href="review.html"><span class="nav-icon">🔁</span> Review</a>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Progress</div>
-        <a class="nav-item" href="stats.html"><span class="nav-icon">📊</span> Stats</a>
-        <a class="nav-item" href="tracker.html"><span class="nav-icon">📈</span> Tracker</a>
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-card" id="user-card-btn">
-        <div class="avatar" id="user-avatar"></div>
-        <div>
-          <div class="user-name" id="user-name">[USERNAME]</div>
-          <div class="user-plan" id="user-email">Free</div>
-        </div>
-      </div>
-      <div id="user-menu"></div>
-    </div>
-  </aside>
-  <!-- MAIN -->
-  <main class="dashboard-main">
-    <div class="coming-soon-container">
-      <h1>Reading</h1>
-      <p class="coming-soon-subheading">Improve comprehension with authentic Japanese texts</p>
-      
-      <div class="coming-soon-mockup">
-        <div class="mockup-placeholder"></div>
-      </div>
-
-      <button class="btn btn-coming-soon" disabled>⏱ Coming Soon</button>
-    </div>
-  </main>
-
-</div>
-
-<script type="module" src="./src/dashboard.js"></script>
+<body>
+    <div id="reading-root"></div>
+    <script type="module" src="./src/reading-main.jsx"></script>
 </body>
 </html>
