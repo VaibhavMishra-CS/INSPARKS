@@ -15,20 +15,51 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 // ---- Firebase config ----
-const firebaseConfig = __FIREBASE_CONFIG__;
+// Make sure these environment variables are set in Vercel
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+};
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+// ---- Configure Google Auth Provider ----
+// This ensures Google Auth works properly on both localhost and production
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
 // ---- Sign in with Google ----
 export async function signInWithGoogle() {
   try {
+    console.log("Attempting Google sign-in...");
+    
+    // signInWithPopup keeps the popup open until auth completes
     const result = await signInWithPopup(auth, googleProvider);
+    
+    console.log("Google sign-in successful:", result.user.email);
     return result.user;
   } catch (err) {
     console.error("Google sign-in error:", err.code, err.message);
+    
+    // Handle specific auth errors
+    if (err.code === "auth/popup-blocked") {
+      alert("Pop-up was blocked. Please allow pop-ups for this site.");
+    } else if (err.code === "auth/cancelled-popup-request" || err.code === "auth/popup-closed-by-user") {
+      console.log("User closed the sign-in popup");
+    } else if (err.code === "auth/unauthorized-domain") {
+      console.error("This domain is not authorized in Firebase Console. Add it to the whitelist.");
+      alert("Authentication domain not configured. Please contact support.");
+    }
+    
     throw err;
   }
 }
@@ -37,9 +68,18 @@ export async function signInWithGoogle() {
 export async function signUpWithEmail(email, password) {
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
+    console.log("Email sign-up successful:", result.user.email);
     return result.user;
   } catch (err) {
     console.error("Email sign-up error:", err.code, err.message);
+    
+    // Handle specific errors
+    if (err.code === "auth/email-already-in-use") {
+      throw new Error("This email is already in use. Please sign in instead.");
+    } else if (err.code === "auth/weak-password") {
+      throw new Error("Password is too weak. Use at least 6 characters.");
+    }
+    
     throw err;
   }
 }
@@ -48,9 +88,16 @@ export async function signUpWithEmail(email, password) {
 export async function signInWithEmail(email, password) {
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
+    console.log("Email sign-in successful:", result.user.email);
     return result.user;
   } catch (err) {
     console.error("Email sign-in error:", err.code, err.message);
+    
+    // Handle specific errors
+    if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+      throw new Error("Invalid email or password.");
+    }
+    
     throw err;
   }
 }
@@ -59,6 +106,7 @@ export async function signInWithEmail(email, password) {
 export async function signOutUser() {
   try {
     await signOut(auth);
+    console.log("Sign-out successful");
   } catch (err) {
     console.error("Sign-out error:", err.code, err.message);
     throw err;
@@ -70,6 +118,7 @@ export async function signOutUser() {
 // any time auth state changes, and again automatically on page refresh.
 export function watchAuthState(callback) {
   return onAuthStateChanged(auth, (user) => {
+    console.log("Auth state changed:", user ? user.email : "logged out");
     callback(user);
   });
 }
@@ -90,13 +139,18 @@ export function renderAuthUI() {
   const emailEl = document.getElementById("user-email");
   const avatarEl = document.getElementById("user-avatar");
   const menuEl = document.getElementById("user-menu");
-  if (!cardBtn || !nameEl || !emailEl || !menuEl) return;
+  
+  if (!cardBtn || !nameEl || !emailEl || !menuEl) {
+    console.warn("Auth UI elements not found in DOM");
+    return;
+  }
 
   watchAuthState((user) => {
     if (!user) return; // requireAuth() already redirects logged-out users away
 
     nameEl.textContent = user.displayName || "Account";
     emailEl.textContent = user.email || "";
+    
     if (avatarEl && user.photoURL) {
       avatarEl.style.backgroundImage = `url(${user.photoURL})`;
       avatarEl.style.backgroundSize = "cover";
@@ -148,8 +202,10 @@ export function requireAuth(loginUrl = "index.html") {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
       if (user) {
+        console.log("User authenticated, granting access");
         resolve(user);
       } else {
+        console.log("User not authenticated, redirecting to login");
         window.location.href = loginUrl;
         // no resolve() — page is navigating away
       }
