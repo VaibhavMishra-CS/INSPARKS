@@ -1,30 +1,27 @@
-// dashboard.js / modules.js
-// Firestore replacement for localStorage.getItem/setItem
-// All reads/writes are scoped to the logged-in user's uid
+// dashboard.js - Complete rewrite with proper imports and Firestore integration
 
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { auth, requireAuth, renderAuthUI } from "./auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { auth, requireAuth, renderAuthUI, signOutUser } from "/src/auth.js";
 
 const db = getFirestore();
 
-// ---- Internal helper: get current user or throw ----
+// ---- Get current user or throw error ----
 function requireUser() {
   const user = auth.currentUser;
   if (!user) {
-    throw new Error("No user is signed in. Cannot read/write user data.");
+    throw new Error("No user is signed in.");
   }
   return user;
 }
 
-// ---- Replacement for localStorage.setItem(key, value) ----
-// Stores a single field inside the user's document: users/{uid}
+// ---- Firestore: Set user item ----
 export async function setUserItem(key, value) {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
   await setDoc(userRef, { [key]: value }, { merge: true });
 }
 
-// ---- Replacement for localStorage.getItem(key) ----
+// ---- Firestore: Get user item ----
 export async function getUserItem(key) {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
@@ -33,8 +30,7 @@ export async function getUserItem(key) {
   return snap.data()[key] ?? null;
 }
 
-// ---- Get the user's entire data object at once ----
-// Useful on dashboard load instead of many separate getItem calls
+// ---- Firestore: Get all user data ----
 export async function getUserData() {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
@@ -42,15 +38,14 @@ export async function getUserData() {
   return snap.exists() ? snap.data() : {};
 }
 
-// ---- Update multiple fields at once ----
-// Replacement for a batch of setItem calls, e.g. saving game progress
+// ---- Firestore: Update multiple fields ----
 export async function updateUserData(fields) {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
   await setDoc(userRef, fields, { merge: true });
 }
 
-// ---- Example: save game progress ----
+// ---- Save game progress ----
 export async function saveProgress(level, score) {
   await updateUserData({
     lastLevel: level,
@@ -59,31 +54,108 @@ export async function saveProgress(level, score) {
   });
 }
 
-// ---- Example: load game progress on dashboard init ----
+// ---- Load dashboard data ----
 export async function loadDashboard() {
   const data = await getUserData();
   return {
-    level: data.lastLevel ?? 1,
+    level: data.lastLevel ?? "N5",
     score: data.lastScore ?? 0,
+    streak: data.streak ?? 0,
     settings: data.settings ?? {}
   };
 }
 
-// ==========================================================================
-// PAGE INIT — this is what was missing. dashboard.html only loads this
-// file, so this file (not modules.js) has to be the one enforcing login
-// and hiding the loading overlay on THIS page.
-// ==========================================================================
-document.addEventListener('DOMContentLoaded', async () => {
-  // Blocks here until login is confirmed; redirects to index.html and
-  // never resolves if no user is signed in.
-  await requireAuth('index.html');
+// ---- Update daily goal progress ----
+export async function updateDailyGoal(cardsReviewed) {
+  await updateUserData({
+    dailyGoalProgress: cardsReviewed,
+    lastReviewDate: new Date().toISOString().split("T")[0]
+  });
+}
 
-  // Wire up the sidebar user card with the logged-in user's name/email
-  // and the account switch/logout menu.
-  renderAuthUI();
+// ---- Initialize dashboard on page load ----
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Verify user is logged in
+    const user = await requireAuth("index.html");
+    console.log("User authenticated:", user.email);
 
-  // Safe to reveal the page now
-  const overlay = document.getElementById('auth-loading-overlay');
-  if (overlay) overlay.style.display = 'none';
+    // Render user card with name/email
+    renderAuthUI();
+
+    // Load user data
+    const dashboardData = await loadDashboard();
+    console.log("Dashboard data loaded:", dashboardData);
+
+    // Update daily goal ring
+    const dailyGoalNum = document.getElementById("daily-goal-num");
+    const dailyGoalRing = document.getElementById("daily-goal-ring");
+    if (dailyGoalNum && dailyGoalRing) {
+      const progress = dashboardData.score || 0;
+      dailyGoalNum.textContent = Math.min(progress, 15);
+      const circumference = 2 * Math.PI * 42;
+      const offset = circumference - (Math.min(progress, 15) / 15) * circumference;
+      dailyGoalRing.style.strokeDashoffset = offset;
+    }
+
+    // Wire up PLAY button
+    const playBtn = document.getElementById("play-btn");
+    if (playBtn) {
+      playBtn.addEventListener("click", () => {
+        const modal = document.getElementById("levelSelectModal");
+        if (modal) modal.style.display = "flex";
+      });
+    }
+
+    // Wire up level buttons
+    window.loadGame = function(level) {
+      console.log("Loading level:", level);
+      const modal = document.getElementById("levelSelectModal");
+      if (modal) modal.style.display = "none";
+
+      const gameUI = document.getElementById("gameUI");
+      if (gameUI) {
+        gameUI.style.display = "block";
+        const selectedLevelEl = document.getElementById("selectedLevel");
+        if (selectedLevelEl) selectedLevelEl.textContent = level;
+
+        // Save selected level
+        saveProgress(level, 0).catch(err => console.error("Failed to save progress:", err));
+      }
+    };
+
+    // Wire up go back button
+    window.goBackToDashboard = function() {
+      const gameUI = document.getElementById("gameUI");
+      if (gameUI) gameUI.style.display = "none";
+    };
+
+    // Wire up other buttons
+    const previousGamesBtn = document.getElementById("previous-games-btn");
+    if (previousGamesBtn) {
+      previousGamesBtn.addEventListener("click", () => {
+        alert("Previous games feature coming soon!");
+      });
+    }
+
+    const achievementsBtn = document.getElementById("achievements-btn");
+    if (achievementsBtn) {
+      achievementsBtn.addEventListener("click", () => {
+        alert("Achievements feature coming soon!");
+      });
+    }
+
+    const quickPracticeBtn = document.getElementById("quick-practice-btn");
+    if (quickPracticeBtn) {
+      quickPracticeBtn.addEventListener("click", () => {
+        const modal = document.getElementById("levelSelectModal");
+        if (modal) modal.style.display = "flex";
+      });
+    }
+
+    console.log("Dashboard initialized successfully");
+  } catch (err) {
+    console.error("Dashboard initialization error:", err);
+    window.location.href = "index.html";
+  }
 });

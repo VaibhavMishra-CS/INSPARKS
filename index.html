@@ -2,20 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>INSPARKS — Learn Japanese, level by level</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/src/style.css">
 <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+    background: #0d0d0f;
+    color: #fff;
+  }
+
   #signin-modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 10000;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
     align-items: center;
     justify-content: center;
+    padding: 20px;
   }
 
   #signin-modal {
@@ -29,11 +43,13 @@
     color: #fff;
     text-align: center;
     font-family: inherit;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   }
 
   #signin-modal h2 {
     margin: 0 0 8px;
     font-size: 20px;
+    font-weight: 700;
   }
 
   #signin-modal p {
@@ -49,9 +65,15 @@
     background: none;
     border: none;
     color: rgba(255, 255, 255, 0.5);
-    font-size: 22px;
+    font-size: 28px;
     cursor: pointer;
     line-height: 1;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   #signin-modal-close:hover {
@@ -71,10 +93,20 @@
     font-weight: 600;
     cursor: pointer;
     box-sizing: border-box;
+    transition: all 0.2s ease;
   }
 
   .signin-provider-btn:hover {
     background: #f0f0f0;
+  }
+
+  .signin-provider-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .signin-provider-btn span {
+    margin-right: 8px;
   }
 
   .signin-divider {
@@ -108,10 +140,16 @@
     color: #fff;
     font-size: 14px;
     box-sizing: border-box;
+    font-family: inherit;
   }
 
   #signin-email-form input::placeholder {
     color: rgba(255, 255, 255, 0.35);
+  }
+
+  #signin-email-form input:focus {
+    outline: none;
+    border-color: #4f8cff;
   }
 
   .signin-email-btn {
@@ -120,18 +158,20 @@
     border: none;
   }
 
-  .signin-email-btn:hover {
+  .signin-email-btn:hover:not(:disabled) {
     background: #3d78e6;
   }
 
   #signin-toggle-mode {
     font-size: 13px;
-    margin: 4px 0 0;
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.7);
   }
 
   #signin-toggle-mode a {
     color: #4f8cff;
     text-decoration: none;
+    cursor: pointer;
   }
 
   #signin-toggle-mode a:hover {
@@ -143,17 +183,28 @@
     font-size: 13px;
     margin: 12px 0 0;
     min-height: 16px;
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    #signin-modal {
+      padding: 24px;
+    }
+
+    #signin-modal h2 {
+      font-size: 18px;
+    }
+
+    .signin-provider-btn {
+      padding: 14px 16px;
+      font-size: 14px;
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-     LANDING (marketing page) — this whole block hides on
-     "Get Started" click, per your existing main.js logic.
-     Anything wrapped in a dashed box is a placeholder —
-     swap it for your own copy.
-     ============================================================ -->
+<!-- LANDING PAGE -->
 <div id="landing">
 
   <!-- NAVBAR -->
@@ -177,7 +228,7 @@
     <div class="wrap">
       <div class="eyebrow">JLPT N5 → N1</div>
       <h1><span class="placeholder">Learn Japanese the way that actually <span class="accent-word">sticks</span>.</span></h1>
-      <p class="subhead"><span class="placeholder">Insparks makes japanese easier and fun through its modules,simplistic game which adapts to weak spots, and tracks progress across JLPT levels.</span></p>
+      <p class="subhead"><span class="placeholder">Insparks makes Japanese easier and fun through its modules, simplistic game which adapts to weak spots, and tracks progress across JLPT levels.</span></p>
       <div class="hero-cta">
         <button class="btn btn-primary btn-lg get-started-btn">Start learning free</button>
         <a href="#features" class="btn btn-ghost btn-lg">See how it works</a>
@@ -208,36 +259,36 @@
     </div>
   </section>
 
-  <!-- PROGRESS SHOWCASE (equivalent of crackd's score-improvement cards) -->
+  <!-- PROGRESS SHOWCASE -->
   <section class="progress-showcase">
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Where learners go from <em>stuck</em> to <em>fluent</em>.</h2>
-        <p class="placeholder">[Framing line about real progress — swap for your own copy]</p>
+        <p class="placeholder">[Framing line about real progress]</p>
       </div>
       <div class="marquee reveal">
         <div class="progress-card">
           <div class="delta">+420</div>
           <div class="range">N5 → N2 vocab · 3 months</div>
-          <div class="quote placeholder">"[Placeholder testimonial quote — replace with your own or real learner feedback]"</div>
+          <div class="quote placeholder">"[Testimonial quote]"</div>
           <div class="who"><div class="avatar"></div> <span class="placeholder">[name]</span></div>
         </div>
         <div class="progress-card">
           <div class="delta">+180</div>
           <div class="range">Kanji mastered · 6 weeks</div>
-          <div class="quote placeholder">"[Placeholder testimonial quote]"</div>
+          <div class="quote placeholder">"[Testimonial quote]"</div>
           <div class="who"><div class="avatar"></div> <span class="placeholder">[name]</span></div>
         </div>
         <div class="progress-card">
           <div class="delta">32-day</div>
           <div class="range">Study streak</div>
-          <div class="quote placeholder">"[Placeholder testimonial quote]"</div>
+          <div class="quote placeholder">"[Testimonial quote]"</div>
           <div class="who"><div class="avatar"></div> <span class="placeholder">[name]</span></div>
         </div>
         <div class="progress-card">
           <div class="delta">N3 → N1</div>
           <div class="range">In one year</div>
-          <div class="quote placeholder">"[Placeholder testimonial quote]"</div>
+          <div class="quote placeholder">"[Testimonial quote]"</div>
           <div class="who"><div class="avatar"></div> <span class="placeholder">[name]</span></div>
         </div>
       </div>
@@ -249,18 +300,18 @@
     <div class="wrap">
       <div class="section-head reveal">
         <h2>Everything you need, in one place.</h2>
-        <p class="placeholder">[Section framing — swap for your own copy]</p>
+        <p class="placeholder">[Section framing]</p>
       </div>
       <div class="feature-grid reveal">
         <div class="feature-card wide">
           <div class="icon-badge">🈶</div>
           <h3>Kanji &amp; vocab decks, by JLPT level</h3>
-          <p>Structured N5 through N1 decks pulled straight from your own kanji/vocab data — no filler, every card earns its place.</p>
+          <p>Structured N5 through N1 decks pulled straight from your own kanji/vocab data — no filler.</p>
         </div>
         <div class="feature-card">
           <div class="icon-badge">🎯</div>
           <h3>Adapts to weak spots</h3>
-          <p>Cards you miss come back more often. The deck reshapes itself around what you actually need to drill.</p>
+          <p>Cards you miss come back more often. The deck reshapes itself around what you need.</p>
         </div>
         <div class="feature-card">
           <div class="icon-badge">🔥</div>
@@ -270,16 +321,16 @@
         <div class="feature-card">
           <div class="icon-badge">📊</div>
           <h3>See every weak spot</h3>
-          <p>Per-level analytics break down exactly which kanji, readings, or vocab groups are costing you the most.</p>
+          <p>Per-level analytics break down exactly which kanji or vocab groups need work.</p>
         </div>
         <div class="feature-card">
           <div class="icon-badge">🔁</div>
           <h3>Never miss the same word twice</h3>
-          <p>Missed cards land in a review deck that resurfaces them until they actually stick.</p>
+          <p>Missed cards land in a review deck that resurfaces them until they stick.</p>
         </div>
         <div class="feature-card wide placeholder">
           <div class="icon-badge">🏯</div>
-          <h3>[Another feature — your game's signature mechanic]</h3>
+          <h3>[Another feature]</h3>
           <p>[Description]</p>
         </div>
       </div>
@@ -293,7 +344,7 @@
         <div class="community-copy reveal">
           <div class="eyebrow">Community</div>
           <h2>Learning Japanese is easier with people doing it alongside you.</h2>
-          <p class="placeholder">[Copy about your Discord community — study alongside other learners, ask questions, share progress]</p>
+          <p class="placeholder">[Copy about your Discord community]</p>
           <div class="community-stats">
             <div><div class="num">800+</div><div class="label">Members</div></div>
             <div><div class="num">24/7</div><div class="label">Active chat</div></div>
@@ -306,21 +357,14 @@
               <div class="avatar"></div>
               <div class="bubble">
                 <div class="name placeholder">[user] <span>2:14 PM</span></div>
-                <div class="text placeholder">[placeholder message — e.g. anyone else stuck on N3 readings?]</div>
+                <div class="text placeholder">[message]</div>
               </div>
             </div>
             <div class="chat-msg">
               <div class="avatar"></div>
               <div class="bubble">
                 <div class="name placeholder">[user] <span>2:15 PM</span></div>
-                <div class="text placeholder">[placeholder reply]</div>
-              </div>
-            </div>
-            <div class="chat-msg">
-              <div class="avatar"></div>
-              <div class="bubble">
-                <div class="name placeholder">[user] <span>2:18 PM</span></div>
-                <div class="text placeholder">[placeholder message — e.g. finally cleared my N4 deck 🎉]</div>
+                <div class="text placeholder">[reply]</div>
               </div>
             </div>
           </div>
@@ -329,7 +373,7 @@
     </div>
   </section>
 
-  <!-- LEVELS (progression tiers — replaces crackd's pricing) -->
+  <!-- LEVELS -->
   <section class="levels" id="levels">
     <div class="wrap">
       <div class="section-head reveal">
@@ -375,19 +419,19 @@
       <div class="faq-list reveal">
         <div class="faq-item open">
           <button class="faq-question">How does the game decide what to show me? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">Answer — The game tracks the real time progress and adjusts according to the games,flashcards and the words you've marked known, which results what to show to the user.</p></div>
+          <div class="faq-answer"><p class="placeholder">The game tracks your real-time progress and adjusts based on the flashcards and words you've marked as known.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-question">Do I need to know hiragana/katakana first? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">Answer — No, The libraries have the hiragana and katakana to learn from. It is recommended to start from their before moving on to more advanced content.</p></div>
+          <div class="faq-answer"><p class="placeholder">No, our libraries include hiragana and katakana learning. It's recommended to start there.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-question">Is this free? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">Answer — Yes, the basic version is free to use, but there are premium features available for purchase.</p></div>
+          <div class="faq-answer"><p class="placeholder">Yes, the basic version is free. Premium features coming soon.</p></div>
         </div>
         <div class="faq-item">
           <button class="faq-question">How do I join the community? <span class="icon">+</span></button>
-          <div class="faq-answer"><p class="placeholder">[Answer — link your Discord]</p></div>
+          <div class="faq-answer"><p class="placeholder">Join our Discord community for live learning and support.</p></div>
         </div>
       </div>
     </div>
@@ -407,7 +451,7 @@
       <div class="footer-grid">
         <div>
           <div class="logo placeholder">INSPARKS</div>
-          <p class="placeholder">Learning a language is fun and difficult at the same time because it requires consistency and discipline. We help with the content and tools to make your learning journey enjoyable and addictive, but the rest is upto you.</p>
+          <p class="placeholder">Learning a language is fun and difficult at the same time because it requires consistency and discipline. We help with the content and tools to make your learning journey enjoyable.</p>
         </div>
         <div class="footer-col">
           <h5>Platform</h5>
@@ -428,41 +472,14 @@
       </div>
       <div class="footer-bottom">
         <span class="placeholder">© 2026 INSPARKS. All rights reserved.</span>
-        <span>Not affiliated with the Japan Foundation or JLPT.</span>
+        <span>Not affiliated with JLPT.</span>
       </div>
     </div>
   </footer>
 
 </div>
 
-<!-- ============================================================
-     LEVEL SELECT — merge with whatever you already have here.
-     Kept minimal so it doesn't clash with your existing markup.
-     ============================================================ -->
-<div id="levelSelect" style="display:none;">
-  <div class="wrap" style="padding: 60px 24px; text-align:center;">
-    <h2 style="font-family:var(--font-display); margin-bottom: 30px;">Choose your level</h2>
-    <div class="level-grid" style="max-width:700px; margin:0 auto;">
-      <div class="level-card" style="cursor:pointer;" onclick="loadGame('N5')"><div class="badge">N5</div><h4>Beginner</h4></div>
-      <div class="level-card" style="cursor:pointer;" onclick="loadGame('N4')"><div class="badge">N4</div><h4>Elementary</h4></div>
-      <div class="level-card" style="cursor:pointer;" onclick="loadGame('N3')"><div class="badge">N3</div><h4>Intermediate</h4></div>
-      <div class="level-card" style="cursor:pointer;" onclick="loadGame('N2')"><div class="badge">N2</div><h4>Upper-int.</h4></div>
-      <div class="level-card" style="cursor:pointer;" onclick="loadGame('N1')"><div class="badge">N1</div><h4>Advanced</h4></div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     GAME UI — your actual kanji/vocab practice screen goes here
-     ============================================================ -->
-<div id="gameUI" style="display:none;">
-  <div class="wrap" style="padding: 60px 24px;">
-    <p style="color:var(--text-secondary);">[Game UI placeholder — your fetch/practice logic renders here]</p>
-  </div>
-</div>
-
 <script type="module" src="/src/main.js"></script>
-<script type="module" src="/src/auth.js"></script>
 <script type="module" src="/src/landing.js"></script>
 </body>
 </html>

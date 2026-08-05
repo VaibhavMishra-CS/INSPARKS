@@ -1,31 +1,44 @@
-// landing.js
-// Wires up every ".get-started-btn" on the landing page to open a sign-in
-// modal (Google, or email/password). On success, redirects to the dashboard.
+// landing.js - Complete rewrite with proper error handling and mobile support
+import { signInWithGoogle, signInWithEmail, signUpWithEmail, watchAuthState } from "./auth.js";
 
-import { signInWithGoogle, signInWithEmail, signUpWithEmail, watchAuthState } from '/src/auth.js';
+const DASHBOARD_URL = "dashboard.html";
 
-const DASHBOARD_URL = 'dashboard.html';
-
-// ---- Build the modal once, reuse it for every click ----
+// ---- Build sign-in modal ----
 function buildModal() {
-  const overlay = document.createElement('div');
-  overlay.id = 'signin-modal-overlay';
+  const overlay = document.createElement("div");
+  overlay.id = "signin-modal-overlay";
   overlay.innerHTML = `
     <div id="signin-modal">
       <button id="signin-modal-close" aria-label="Close">&times;</button>
       <h2>Sign in to continue</h2>
-      <p>Create your account to save progress and pick up where you left off.</p>
+      <p>Create your account to save progress and track your learning journey.</p>
 
       <button id="signin-google-btn" class="signin-provider-btn">
-        Continue with Google
+        <span>🔵</span> Continue with Google
       </button>
 
       <div class="signin-divider"><span>or</span></div>
 
       <form id="signin-email-form">
-        <input type="email" id="signin-email-input" placeholder="Email" required />
-        <input type="password" id="signin-password-input" placeholder="Password" required />
-        <button type="submit" id="signin-email-submit" class="signin-provider-btn signin-email-btn">
+        <input 
+          type="email" 
+          id="signin-email-input" 
+          placeholder="Email" 
+          required 
+          autocomplete="email"
+        />
+        <input 
+          type="password" 
+          id="signin-password-input" 
+          placeholder="Password" 
+          required 
+          autocomplete="current-password"
+        />
+        <button 
+          type="submit" 
+          id="signin-email-submit" 
+          class="signin-provider-btn signin-email-btn"
+        >
           Sign in
         </button>
       </form>
@@ -42,75 +55,123 @@ function buildModal() {
 }
 
 function showModal(overlay) {
-  overlay.style.display = 'flex';
-  document.getElementById('signin-modal-error').textContent = '';
+  overlay.style.display = "flex";
+  document.getElementById("signin-modal-error").textContent = "";
 }
 
 function hideModal(overlay) {
-  overlay.style.display = 'none';
+  overlay.style.display = "none";
 }
 
 function showError(message) {
-  document.getElementById('signin-modal-error').textContent = message;
+  const errorEl = document.getElementById("signin-modal-error");
+  if (errorEl) {
+    errorEl.textContent = message;
+    errorEl.style.display = "block";
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // If someone is already logged in and lands back on index.html,
-  // send them straight to the dashboard instead of showing the landing page.
+function clearError() {
+  const errorEl = document.getElementById("signin-modal-error");
+  if (errorEl) {
+    errorEl.textContent = "";
+    errorEl.style.display = "none";
+  }
+}
+
+// ---- Initialize modal on page load ----
+document.addEventListener("DOMContentLoaded", () => {
+  // If already logged in, redirect to dashboard
   watchAuthState((user) => {
     if (user) {
+      console.log("User already logged in, redirecting to dashboard");
       window.location.href = DASHBOARD_URL;
     }
   });
 
   const overlay = buildModal();
-  let isSignUpMode = false; // toggles between "Sign in" and "Sign up"
+  let isSignUpMode = false;
 
-  // Wire up every button/link with the get-started-btn class
-  document.querySelectorAll('.get-started-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
+  // Wire up all "Get Started" buttons
+  document.querySelectorAll(".get-started-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
       showModal(overlay);
     });
   });
 
-  document.getElementById('signin-modal-close').addEventListener('click', () => {
+  // Close modal when X is clicked
+  document.getElementById("signin-modal-close").addEventListener("click", () => {
     hideModal(overlay);
   });
 
-  // Click outside the modal box to close it
-  overlay.addEventListener('click', (e) => {
+  // Close modal when clicking outside
+  overlay.addEventListener("click", (e) => {
     if (e.target === overlay) hideModal(overlay);
   });
 
-  document.getElementById('signin-google-btn').addEventListener('click', async () => {
+  // Google sign-in button
+  document.getElementById("signin-google-btn").addEventListener("click", async () => {
+    clearError();
+    const btn = document.getElementById("signin-google-btn");
+    btn.disabled = true;
+    btn.textContent = "Signing in...";
+
     try {
       await signInWithGoogle();
       window.location.href = DASHBOARD_URL;
     } catch (err) {
-      showError('Google sign-in failed. Please try again.');
+      console.error("Google sign-in failed:", err);
+      showError(err.message || "Google sign-in failed. Please try again.");
+      btn.disabled = false;
+      btn.textContent = "Continue with Google";
     }
   });
 
-  // Toggle between "Sign in" and "Sign up" mode.
-  // Uses event delegation on the parent <p> since the link's innerHTML
-  // gets replaced when the mode switches.
-  document.getElementById('signin-toggle-mode').addEventListener('click', (e) => {
-    if (e.target.id !== 'signin-toggle-link') return;
+  // Toggle between Sign In and Sign Up mode
+  document.getElementById("signin-toggle-mode").addEventListener("click", (e) => {
+    if (e.target.id !== "signin-toggle-link") return;
     e.preventDefault();
 
     isSignUpMode = !isSignUpMode;
+    clearError();
 
-    document.getElementById('signin-email-submit').textContent = isSignUpMode ? 'Sign up' : 'Sign in';
-    document.getElementById('signin-toggle-mode').innerHTML = isSignUpMode
-      ? 'Already have an account? <a href="#" id="signin-toggle-link">Sign in</a>'
-      : 'Don\'t have an account? <a href="#" id="signin-toggle-link">Sign up</a>';
+    const submitBtn = document.getElementById("signin-email-submit");
+    const toggleLink = document.getElementById("signin-toggle-mode");
+
+    if (isSignUpMode) {
+      submitBtn.textContent = "Sign up";
+      toggleLink.innerHTML =
+        'Already have an account? <a href="#" id="signin-toggle-link">Sign in</a>';
+    } else {
+      submitBtn.textContent = "Sign in";
+      toggleLink.innerHTML =
+        "Don't have an account? <a href=\"#\" id=\"signin-toggle-link\">Sign up</a>";
+    }
   });
 
-  document.getElementById('signin-email-form').addEventListener('submit', async (e) => {
+  // Email sign-in/sign-up form
+  document.getElementById("signin-email-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById('signin-email-input').value.trim();
-    const password = document.getElementById('signin-password-input').value;
+    clearError();
+
+    const email = document.getElementById("signin-email-input").value.trim();
+    const password = document.getElementById("signin-password-input").value;
+    const submitBtn = document.getElementById("signin-email-submit");
+
+    // Validation
+    if (!email || !password) {
+      showError("Please fill in all fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      showError("Password must be at least 6 characters.");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = isSignUpMode ? "Creating account..." : "Signing in...";
 
     try {
       if (isSignUpMode) {
@@ -120,15 +181,36 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       window.location.href = DASHBOARD_URL;
     } catch (err) {
-      if (err.code === 'auth/email-already-in-use') {
-        showError('That email is already registered. Try signing in instead.');
-      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        showError('Incorrect email or password.');
-      } else if (err.code === 'auth/weak-password') {
-        showError('Password should be at least 6 characters.');
-      } else {
-        showError('Something went wrong. Please try again.');
-      }
+      console.error("Auth error:", err);
+      showError(err.message || "Authentication failed. Please try again.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = isSignUpMode ? "Sign up" : "Sign in";
     }
   });
+
+  // FAQ accordion
+  document.querySelectorAll(".faq-question").forEach((question) => {
+    question.addEventListener("click", () => {
+      const item = question.parentElement;
+      const wasOpen = item.classList.contains("open");
+      document.querySelectorAll(".faq-item").forEach((i) => i.classList.remove("open"));
+      if (!wasOpen) item.classList.add("open");
+    });
+  });
+
+  // Reveal animations on scroll
+  const revealEls = document.querySelectorAll(".reveal");
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  revealEls.forEach((el) => revealObserver.observe(el));
 });
