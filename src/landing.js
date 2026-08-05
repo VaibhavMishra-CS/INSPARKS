@@ -1,4 +1,4 @@
-// landing.js - Complete rewrite with proper error handling and mobile support
+// landing.js - Final version with correct imports
 import { signInWithGoogle, signInWithEmail, signUpWithEmail, watchAuthState } from "./auth.js";
 
 const DASHBOARD_URL = "dashboard.html";
