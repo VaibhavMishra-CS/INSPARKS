@@ -1,0 +1,87 @@
+:root,
+[data-theme="dark"] {
+  --page-bg: #0d0d0f;
+  --panel-bg: #16161a;
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --text-faint: rgba(255, 255, 255, 0.4);
+  --nav-text: rgba(255, 255, 255, 0.7);
+  --nav-hover-bg: rgba(255, 255, 255, 0.1);
+  --surface-subtle: rgba(255, 255, 255, 0.05);
+  --accent: #4f8cff;
+  --accent-hover: #3d78e6;
+  --accent-gradient-end: #00d4ff;
+  --btn-ghost-border: rgba(255, 255, 255, 0.2);
+  --ring-track: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] {
+  --page-bg: #F5F3EF;
+  --panel-bg: #FFFFFF;
+  --panel-border: #E3DFD6;
+  --text-main: #1A1410;
+  --text-muted: #6B6359;
+  --text-faint: #9C9488;
+  --nav-text: #4A443C;
+  --nav-hover-bg: #EDE9E1;
+  --surface-subtle: #F0EDE7;
+  --accent: #4f8cff;
+  --accent-hover: #3d78e6;
+  --accent-gradient-end: #00d4ff;
+  --btn-ghost-border: #D4CEC4;
+  --ring-track: #E3DFD6;
+}
+
+/* ---- Theme toggle switch, used inside the user-menu dropdown
+   (matches crackd.it's "Light mode" row in the user popup) ---- */
+.user-menu-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: default;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--panel-border);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+.theme-switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.theme-switch input:checked + .theme-switch-slider {
+  background: var(--accent);
+}
+
+.theme-switch input:checked + .theme-switch-slider::before {
+  transform: translateX(16px);
+}

@@ -10,6 +10,7 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { bindThemeToggle } from "./theme.js";
 
 // Firebase config from vite.config.js __FIREBASE_CONFIG__
 const firebaseConfig = __FIREBASE_CONFIG__;
@@ -33,7 +34,7 @@ export async function signInWithGoogle() {
     return result.user;
   } catch (err) {
     console.error("Google sign-in error:", err.code, err.message);
-    
+
     if (err.code === "auth/popup-blocked") {
       throw new Error("Pop-ups are blocked. Please allow pop-ups for this site.");
     } else if (err.code === "auth/cancelled-popup-request") {
@@ -56,7 +57,7 @@ export async function signUpWithEmail(email, password) {
     return result.user;
   } catch (err) {
     console.error("Sign-up error:", err.code, err.message);
-    
+
     if (err.code === "auth/email-already-in-use") {
       throw new Error("Email already in use. Please sign in instead.");
     } else if (err.code === "auth/invalid-email") {
@@ -76,7 +77,7 @@ export async function signInWithEmail(email, password) {
     return result.user;
   } catch (err) {
     console.error("Sign-in error:", err.code, err.message);
-    
+
     if (err.code === "auth/user-not-found") {
       throw new Error("No account found with this email.");
     } else if (err.code === "auth/wrong-password") {
@@ -113,13 +114,15 @@ export function watchAuthState(callback) {
 }
 
 // ---- Render user card and menu ----
+// Menu structure matches crackd.it's user-card dropdown:
+// View Profile / Light mode toggle / Switch account / Log out.
 export function renderAuthUI() {
   const cardBtn = document.getElementById("user-card-btn");
   const nameEl = document.getElementById("user-name");
   const emailEl = document.getElementById("user-email");
   const avatarEl = document.getElementById("user-avatar");
   const menuEl = document.getElementById("user-menu");
-  
+
   if (!cardBtn || !nameEl || !emailEl || !menuEl) {
     console.warn("Auth UI elements not found in DOM");
     return;
@@ -130,17 +133,31 @@ export function renderAuthUI() {
 
     nameEl.textContent = user.displayName || "Account";
     emailEl.textContent = user.email || "";
-    
+
     if (avatarEl && user.photoURL) {
       avatarEl.style.backgroundImage = `url(${user.photoURL})`;
       avatarEl.style.backgroundSize = "cover";
     }
 
     menuEl.innerHTML = `
+      <a href="profile.html" class="user-menu-item" id="view-profile-btn">View Profile</a>
+      <div class="user-menu-item user-menu-toggle-row">
+        <span>Light mode</span>
+        <label class="theme-switch">
+          <input type="checkbox" id="theme-toggle-input" />
+          <span class="theme-switch-slider"></span>
+        </label>
+      </div>
       <button id="switch-account-btn" class="user-menu-item">Switch account</button>
       <button id="logout-btn" class="user-menu-item">Log out</button>
     `;
     menuEl.style.display = "none";
+
+    bindThemeToggle(document.getElementById("theme-toggle-input"));
+
+    document.getElementById("theme-toggle-input")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
 
     document.getElementById("switch-account-btn")?.addEventListener("click", async (e) => {
       e.stopPropagation();
