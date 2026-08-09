@@ -1,13 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INSPARKS — Reading Practice</title>
-    <link rel="stylesheet" href="./src/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INSPARKS — Reading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./src/style.css">
+<link rel="stylesheet" href="./src/theme.css">
+<style>
+  /* Reading uses its own full-bleed layout inside #reading-root,
+     since the library/detail views need a different shape than
+     the standard app-shell (sidebar becomes book-list sidebar
+     only inside the reading detail view, not the main dashboard sidebar). */
+  body.dashboard-body { padding: 0; }
+  #page-shell {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+  }
+  #outer-sidebar {
+    padding: 24px 16px;
+    border-right: 1px solid var(--border);
+  }
+  #outer-sidebar .sidebar { border: none; padding: 0; position: static; }
+  #reading-root { min-height: 100vh; }
+  @media (max-width: 900px) {
+    #page-shell { grid-template-columns: 1fr; }
+    #outer-sidebar { display: none; }
+  }
+</style>
 </head>
-<body>
-    <div id="reading-root"></div>
-    <script type="module" src="./src/reading-main.jsx"></script>
+<body class="dashboard-body">
+
+<div id="page-shell">
+  <div id="outer-sidebar"><aside class="sidebar"></aside></div>
+  <div id="reading-root"></div>
+</div>
+
+<script type="module" src="./src/icons.js" id="icons-loader"></script>
+<script type="module">
+  import { mountSidebar } from './src/icons.js';
+  mountSidebar('reading');
+</script>
+<script type="module" src="./src/reading-main.jsx"></script>
 </body>
 </html>

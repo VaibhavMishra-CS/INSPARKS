@@ -7,103 +7,64 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./src/style.css">
-<link rel="stylesheet" href="./src/dashboard.css">
+<link rel="stylesheet" href="./src/theme.css">
 <link rel="stylesheet" href="./src/vocab.css">
 </head>
 <body class="dashboard-body">
 
 <div class="app-shell">
-<!-- SIDEBAR (same as dashboard.html) -->
-  <aside class="sidebar">
-    <div class="sidebar-logo"><span class="mark">語</span> <span class="placeholder">INSPARKS</span></div>
-
-    <nav class="sidebar-nav">
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Home</a>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Learn</div>
-        <a class="nav-item" href="modules.html"><span class="nav-icon">📚</span> Books</a>
-        <a class="nav-item" href="grammar.html"><span class="nav-icon">文</span> Grammar</a>
-        <a class="nav-item" id="nav-vocab" href="vocab.html?mode=vocab"><span class="nav-icon">言</span> Vocab</a>
-        <a class="nav-item" id="nav-kanji" href="vocab.html?mode=kanji"><span class="nav-icon">字</span> Kanji</a>
-        <a class="nav-item" href="reading.html"><span class="nav-icon">📖</span> Reading</a>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Practice</div>
-        <a class="nav-item" href="mocks.html"><span class="nav-icon">📝</span> Mocks</a>
-        <a class="nav-item" href="review.html"><span class="nav-icon">🔁</span> Review</a>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-group-label">Progress</div>
-        <a class="nav-item" href="stats.html"><span class="nav-icon">📊</span> Stats</a>
-        <a class="nav-item" href="tracker.html"><span class="nav-icon">📈</span> Tracker</a>
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-    <div class="user-card" id="user-card-btn">
-     <div class="avatar" id="user-avatar"></div>
-      <div>
-       <div class="user-name" id="user-name">[USERNAME]</div>
-        <div class="user-plan" id="user-email">Free</div>
-      </div>
-    </div>
-    <div id="user-menu"></div>
-  </div>
-  </aside>
+  <aside class="sidebar"></aside>
 
   <!-- MAIN -->
   <main class="dashboard-main">
 
-    <!-- GRID VIEW (word list + simple filter bar) -->
+    <!-- GRID VIEW -->
     <div id="grid-view">
       <div class="vocab-tabs">
         <button class="vocab-tab active" id="tab-vocab">Vocabulary</button>
         <button class="vocab-tab" id="tab-kanji">Kanji</button>
       </div>
 
-      <div class="vocab-header">
-        <div class="vocab-header-left">
-          <h2 id="list-title">Vocab List</h2>
-          <span class="word-count-pill" id="total-word-count">0 words</span>
+      <div class="vocab-panel panel">
+        <div class="vocab-header">
+          <div class="vocab-header-left">
+            <h2 id="list-title">Vocab List</h2>
+            <span class="word-count-pill" id="total-word-count">0 words</span>
+          </div>
+          <input type="text" class="vocab-search" id="vocab-search" placeholder="Search...">
         </div>
-        <input type="text" class="vocab-search" id="vocab-search" placeholder="Search...">
-      </div>
 
-      <div class="filter-bar">
-        <select class="filter-select" id="filter-status">
-          <option value="all">All Words</option>
-          <option value="mastered">Mastered</option>
-          <option value="missed">Missed</option>
-          <option value="new">New</option>
-        </select>
+        <div class="filter-bar">
+          <select class="filter-select" id="filter-status">
+            <option value="all">All Words</option>
+            <option value="mastered">Mastered</option>
+            <option value="missed">Missed</option>
+            <option value="new">New</option>
+          </select>
+          <select class="filter-select" id="filter-level">
+            <option value="all">All Levels</option>
+            <option value="N5">N5</option>
+            <option value="N4">N4</option>
+            <option value="N3">N3</option>
+            <option value="N2">N2</option>
+            <option value="N1">N1</option>
+          </select>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-flagged"> Flagged
+          </label>
+        </div>
 
-        <select class="filter-select" id="filter-level">
-          <option value="all">All Levels</option>
-          <option value="N5">N5</option>
-          <option value="N4">N4</option>
-          <option value="N3">N3</option>
-          <option value="N2">N2</option>
-          <option value="N1">N1</option>
-        </select>
+        <div class="word-grid" id="word-grid"></div>
 
-        <label class="filter-checkbox">
-          <input type="checkbox" id="filter-flagged"> Flagged
-        </label>
-      </div>
-
-      <div class="word-grid" id="word-grid"></div>
-
-      <div class="pagination">
-        <button id="prev-page">Previous</button>
-        <span id="page-label">Page 1 of 1</span>
-        <button id="next-page">Next</button>
+        <div class="pagination">
+          <button id="prev-page">Previous</button>
+          <span id="page-label">Page 1 of 1</span>
+          <button id="next-page">Next</button>
+        </div>
       </div>
     </div>
 
-    <!-- DETAIL VIEW (Cards or Scroll, entered by clicking a word) -->
+    <!-- DETAIL VIEW -->
     <div id="detail-view" style="display:none;">
       <div class="detail-toolbar">
         <div class="view-toggle">
@@ -139,12 +100,11 @@
         </div>
       </div>
 
-      <!-- CARDS sub-view -->
       <div id="flashcard-view" class="flashcard-view">
         <div class="flashcard-stage">
           <button class="flashcard-nav-btn" id="prev-word-btn">‹</button>
 
-          <div class="flashcard-card" id="flashcard-card">
+          <div class="flashcard-card panel" id="flashcard-card">
             <div class="card-top-row">
               <span class="card-level-badge" id="card-level-badge">N5</span>
               <span class="card-position" id="card-position">Word 1 of 1</span>
@@ -169,7 +129,7 @@
             </div>
           </div>
 
-          <div class="kanji-side-panel" id="kanji-side-panel">
+          <div class="kanji-side-panel panel" id="kanji-side-panel">
             <h4>Onyomi</h4>
             <div class="reading-value" id="side-onyomi">—</div>
             <h4>Kunyomi</h4>
@@ -180,7 +140,6 @@
         </div>
       </div>
 
-      <!-- SCROLL sub-view -->
       <div id="scroll-view" class="scroll-view">
         <div class="scroll-count" id="scroll-count">0 of 0 words</div>
         <div id="scroll-list"></div>
@@ -189,9 +148,9 @@
 
   </main>
 
-  <!-- RIGHT RAIL -->
+  <!-- RIGHT RAIL — Daily Goal panel + Practice panel (mascot removed here) -->
   <aside class="right-rail">
-    <div class="daily-goal-card">
+    <div class="daily-goal-card panel">
       <div class="head">
         <span id="goal-title">Daily Vocab Goal</span>
         <button class="edit-toggle" id="goal-edit-toggle">✎</button>
@@ -220,10 +179,14 @@
       </div>
     </div>
 
-    <div class="coming-soon-card">
-      <div class="icon">🎮</div>
-      <h4>Game Coming Soon</h4>
-      <p>A new way to practice is on the way.</p>
+    <div class="practice-set-card panel">
+      <h3>Practice Set</h3>
+      <p>Flashcard-style review with definitions.</p>
+      <div class="practice-set-btns">
+        <button class="btn btn-navy" data-count="5">5</button>
+        <button class="btn btn-navy" data-count="10">10</button>
+        <button class="btn btn-navy" data-count="15">15</button>
+      </div>
     </div>
   </aside>
 

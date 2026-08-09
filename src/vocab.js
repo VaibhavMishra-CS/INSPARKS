@@ -1,3 +1,5 @@
+import { mountSidebar } from './icons.js';
+
 // STATE
 let currentMode = 'vocab';
 let allEntries = [];
@@ -31,41 +33,21 @@ function setFlagged(mode, key, value) {
   writeMap(`${mode}_flagged`, f);
 }
 
-// ========================================================================
-// TRACKING IF WORD WAS EVER MARKED (for red color state)
-// ========================================================================
 function getReviewedWords(mode) { return readMap(`${mode}_reviewed`); }
 function setReviewedWord(mode, key, value) {
   const reviewed = getReviewedWords(mode);
-  if (value) {
-    reviewed[key] = true;
-  } else {
-    delete reviewed[key];
-  }
+  if (value) reviewed[key] = true; else delete reviewed[key];
   writeMap(`${mode}_reviewed`, reviewed);
 }
 
 function todayStr() { return new Date().toISOString().slice(0, 10); }
 
-// ========================================================================
-// DAILY PROGRESS — Count only CURRENTLY mastered words (green)
-// Green - Red = Total tracked
-// ========================================================================
 function calculateDailyProgress(mode) {
-  // Count only words currently mastered (green)
   const mastered = getMastered(mode);
   const greenCount = Object.keys(mastered).length;
-  
-  return {
-    date: todayStr(),
-    count: greenCount
-  };
+  return { date: todayStr(), count: greenCount };
 }
-
-function getDailyProgress(mode) {
-  // Always recalculate based on current mastered words
-  return calculateDailyProgress(mode);
-}
+function getDailyProgress(mode) { return calculateDailyProgress(mode); }
 
 function getDailyGoal(mode) { return parseInt(localStorage.getItem(`${mode}_goal`) || '15', 10); }
 function setDailyGoal(mode, value) { localStorage.setItem(`${mode}_goal`, String(value)); }
@@ -82,8 +64,8 @@ async function loadEntries(mode) {
 
 async function initMode(mode) {
   currentMode = mode;
-  document.getElementById('nav-vocab').classList.toggle('active', mode === 'vocab');
-  document.getElementById('nav-kanji').classList.toggle('active', mode === 'kanji');
+  document.getElementById('nav-vocab')?.classList.toggle('active', mode === 'vocab');
+  document.getElementById('nav-kanji')?.classList.toggle('active', mode === 'kanji');
   document.getElementById('list-title').textContent = mode === 'vocab' ? 'Vocab List' : 'Kanji List';
   document.getElementById('goal-title').textContent = mode === 'vocab' ? 'Daily Vocab Goal' : 'Daily Kanji Goal';
   document.getElementById('goal-studied-label').textContent = mode === 'vocab' ? 'Vocab Studied' : 'Kanji Studied';
@@ -129,7 +111,7 @@ function applyFilters() {
     if (flaggedOnly && !flagged[key]) return false;
     if (status === 'mastered' && !isMastered) return false;
     if (status === 'new' && isMastered) return false;
-    if (status === 'missed') return false; // no quiz/wrong-answer feature yet
+    if (status === 'missed') return false;
 
     if (search) {
       const label = currentMode === 'vocab' ? entry.word : entry.character;
@@ -185,22 +167,15 @@ function renderGrid() {
     const key = getWordKey(currentMode, entry);
     const isMastered = !!mastered[key];
     const wasReviewed = !!reviewed[key];
-    
+
     const card = document.createElement('button');
     card.className = 'word-card';
     card.setAttribute('data-word-id', key);
     card.textContent = label;
-    
-    // ✅ Color logic:
-    // GREEN = currently marked as mastered
-    // RED = was marked but now unmarked
-    // NO COLOR = never marked
-    if (isMastered) {
-      card.classList.add('known');
-    } else if (wasReviewed && !isMastered) {
-      card.classList.add('unknown');
-    }
-    
+
+    if (isMastered) card.classList.add('known');
+    else if (wasReviewed && !isMastered) card.classList.add('unknown');
+
     card.addEventListener('click', () => openDetail(globalIndex));
     grid.appendChild(card);
   });
@@ -225,7 +200,7 @@ function renderWordCount() {
   document.getElementById('total-word-count').textContent = `${allEntries.length} words`;
 }
 
-// DETAIL VIEW (Cards / Scroll)
+// DETAIL VIEW
 function openDetail(index) {
   currentCardIndex = index;
   document.getElementById('grid-view').style.display = 'none';
@@ -259,7 +234,7 @@ document.getElementById('filters-btn').addEventListener('click', () => {
   document.getElementById('filters-modal').classList.toggle('open');
 });
 
-// CARDS (flashcard detail)
+// CARDS
 function renderFlashcard() {
   if (!filteredEntries.length) return;
   const entry = filteredEntries[currentCardIndex];
@@ -319,19 +294,11 @@ function renderFlashcard() {
   const knowBtn = document.getElementById('know-word-btn');
   knowBtn.classList.toggle('active', isMastered);
   knowBtn.textContent = isMastered ? '✓ Mastered' : '✓ I know this word';
-  
-  // ✅ Set data attribute
   knowBtn.setAttribute('data-word-id', key);
-  
-  // ✅ Apply color classes based on mastered state:
-  // GREEN = currently mastered
-  // RED = was marked but now unmarked
+
   knowBtn.classList.remove('known', 'unknown');
-  if (isMastered) {
-    knowBtn.classList.add('known');
-  } else if (wasReviewed && !isMastered) {
-    knowBtn.classList.add('unknown');
-  }
+  if (isMastered) knowBtn.classList.add('known');
+  else if (wasReviewed && !isMastered) knowBtn.classList.add('unknown');
 
   document.getElementById('prev-word-btn').disabled = currentCardIndex <= 0;
   document.getElementById('next-word-btn').disabled = currentCardIndex >= filteredEntries.length - 1;
@@ -357,22 +324,16 @@ document.getElementById('know-word-btn').addEventListener('click', () => {
   const key = getWordKey(currentMode, entry);
   const mastered = getMastered(currentMode);
   const wasMastered = !!mastered[key];
-  
-  // Toggle mastered state
+
   setMastered(currentMode, key, !wasMastered);
-  
-  // ✅ Track that this word was reviewed (for red color)
   setReviewedWord(currentMode, key, true);
-  
-  // ✅ Re-render daily goal (it recalculates based on current mastered count)
-  // Formula: Count all currently green words = tracker number
+
   renderDailyGoal();
-  
   renderFlashcard();
-  renderGrid(); // ✅ Re-render grid to show color changes
+  renderGrid();
 });
 
-// SCROLL (read-only list)
+// SCROLL
 function renderScrollList() {
   const list = document.getElementById('scroll-list');
   list.innerHTML = '';
@@ -386,7 +347,7 @@ function renderScrollList() {
     const key = getWordKey(currentMode, entry);
     const isMastered = !!mastered[key];
     const wasReviewed = !!reviewed[key];
-    
+
     const row = document.createElement('div');
     row.className = 'scroll-row';
     row.setAttribute('data-word-id', key);
@@ -400,16 +361,10 @@ function renderScrollList() {
     row.querySelector('.scroll-level').textContent = entry.level;
     row.querySelector('.scroll-word').textContent = label;
     row.querySelector('.scroll-meaning').textContent = meaning;
-    
-    // ✅ Apply color classes based on mastered state:
-    // GREEN = currently mastered
-    // RED = was marked but now unmarked
-    if (isMastered) {
-      row.classList.add('known');
-    } else if (wasReviewed && !isMastered) {
-      row.classList.add('unknown');
-    }
-    
+
+    if (isMastered) row.classList.add('known');
+    else if (wasReviewed && !isMastered) row.classList.add('unknown');
+
     list.appendChild(row);
   });
 }
@@ -440,6 +395,27 @@ document.getElementById('goal-input').addEventListener('change', (e) => {
   renderDailyGoal();
 });
 
+// PRACTICE SET buttons (right rail) — starts flashcard review at N cards
+document.querySelectorAll('.practice-set-btns [data-count]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!filteredEntries.length) return;
+    const count = parseInt(btn.dataset.count, 10);
+    // Just jump into detail view with however many are available up to `count`
+    currentCardIndex = 0;
+    openDetail(0);
+    filteredEntries = shuffleForPractice(filteredEntries).slice(0, count);
+    renderFlashcard();
+  });
+});
+function shuffleForPractice(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 // TABS
 document.getElementById('tab-vocab').addEventListener('click', () => {
   document.getElementById('tab-vocab').classList.add('active');
@@ -454,9 +430,11 @@ document.getElementById('tab-kanji').addEventListener('click', () => {
   initMode('kanji');
 });
 
-// INIT — respects ?mode=kanji from the sidebar's Kanji link
+// INIT
 const params = new URLSearchParams(window.location.search);
 const startMode = params.get('mode') === 'kanji' ? 'kanji' : 'vocab';
 document.getElementById('tab-vocab').classList.toggle('active', startMode === 'vocab');
 document.getElementById('tab-kanji').classList.toggle('active', startMode === 'kanji');
+
+mountSidebar(startMode); // 'vocab' or 'kanji' — highlights correct nav item
 initMode(startMode);
