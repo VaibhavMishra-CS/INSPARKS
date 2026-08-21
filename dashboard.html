@@ -17,107 +17,78 @@
   <!-- SIDEBAR — content injected by icons.js -> mountSidebar('home') -->
   <aside class="sidebar"></aside>
 
-  <!-- MAIN -->
+  <!-- MAIN DASHBOARD CONTENT -->
   <main class="dashboard-main" id="main-content">
 
-    <div class="top-row">
-      <div class="stat-card panel">
-        <div class="stat-card-head">
-          <h3>Daily Goal</h3>
+    <!-- HAYAILEARN-STYLE TOP METRICS & PROFILE BAR -->
+    <header class="top-nav-bar panel">
+      <div class="left-metrics">
+        <div class="metric-chip level-chip">
+          <span id="user-lvl-display">1 lvl</span>
         </div>
-        <div class="stat-card-body">
-          <div class="progress-ring">
-            <svg viewBox="0 0 100 100">
-              <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
-              <circle class="ring-fg" id="daily-goal-ring" cx="50" cy="50" r="42"></circle>
-            </svg>
-            <div class="ring-label">
-              <span class="ring-num" id="daily-goal-num">0</span>
-              <span class="ring-total">/15</span>
-            </div>
+        <div class="metric-chip goal-chip">
+          <span class="icon">📕</span>
+          <span id="daily-card-count">0 / 15</span>
+        </div>
+        <div class="metric-chip energy-chip">
+          <span class="icon">⚡</span>
+          <span id="user-points">100</span>
+        </div>
+        <div class="metric-chip streak-chip">
+          <span class="icon">🔥</span>
+          <span id="user-streak">0 days</span>
+        </div>
+      </div>
+
+      <div class="right-profile-controls">
+        <!-- Theme Toggle Moved to Home Bar -->
+        <button class="theme-toggle-btn" id="top-theme-toggle" title="Toggle Light/Dark Theme">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-text">Dark</span>
+        </button>
+
+        <!-- Profile Badge Moved to Home Bar -->
+        <div class="top-user-profile">
+          <div class="profile-avatar" id="profile-avatar-initial">U</div>
+          <div class="profile-info">
+            <span class="profile-name" id="user-display-name">User</span>
+            <span class="profile-email" id="user-display-email">user@example.com</span>
           </div>
-          <div class="stat-card-desc">Cards reviewed today</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TITLE & CATEGORY FILTER ROW -->
+    <section class="catalog-header-section">
+      <div class="title-row">
+        <h2>Videos</h2>
+        <div class="header-actions">
+          <button class="action-btn" id="refresh-btn" title="Refresh Feed">🔄</button>
+          <button class="action-btn" id="filter-btn" title="Filter Options">🎛️</button>
         </div>
       </div>
 
-      <div class="stat-card panel">
-        <div class="stat-card-head">
-          <h3>Mistakes</h3>
-        </div>
-        <div class="stat-card-body row">
-          <div class="mistake-num" id="mistake-num">0<span>/10</span></div>
-          <div class="stat-card-desc">Missed this week</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- GAME LAUNCHER -->
-    <section class="game-launcher panel">
-      <div class="shoji-bg" aria-hidden="true"></div>
-
-      <div class="launcher-content">
-        <button class="launcher-node" id="previous-games-btn">
-          <span class="node-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-          </span>
-          <span class="node-kanji">続き</span>
-          <span class="node-label">Previous Games</span>
-        </button>
-
-        <button class="launcher-hub" id="play-btn">
-          <span class="hub-ring ring-1"></span>
-          <span class="hub-ring ring-2"></span>
-          <span class="hub-label">PLAY</span>
-        </button>
-
-        <button class="launcher-node" id="achievements-btn">
-          <span class="node-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9c0-1 1-2 2-2h8c1 0 2 1 2 2v8c0 1-1 2-2 2H8c-1 0-2-1-2-2z"/><path d="M9 5l-3 3M15 5l3 3"/></svg>
-          </span>
-          <span class="node-kanji">実績</span>
-          <span class="node-label">Achievements</span>
-        </button>
+      <!-- Scrollable Category Pills -->
+      <div class="category-scroll-bar" id="categoryContainer">
+        <button class="category-pill active" data-category="all">All</button>
+        <button class="category-pill" data-category="anime">Anime/Manga</button>
+        <button class="category-pill" data-category="gaming">Gaming</button>
+        <button class="category-pill" data-category="music">Music</button>
+        <button class="category-pill" data-category="vlog">Vlog</button>
+        <button class="category-pill" data-category="street">Street Interview</button>
+        <button class="category-pill" data-category="education">Education</button>
+        <button class="category-pill" data-category="podcast">Podcast</button>
       </div>
     </section>
 
-    <div id="levelSelectModal" class="modal-overlay" style="display:none;">
-      <div class="modal-box">
-        <h2>Choose your level</h2>
-        <div class="level-pick-grid">
-          <button class="level-pick-card" onclick="loadGame('N5')"><span class="badge n5">N5</span><h4>Beginner</h4></button>
-          <button class="level-pick-card" onclick="loadGame('N4')"><span class="badge n4">N4</span><h4>Elementary</h4></button>
-          <button class="level-pick-card" onclick="loadGame('N3')"><span class="badge n3">N3</span><h4>Intermediate</h4></button>
-          <button class="level-pick-card" onclick="loadGame('N2')"><span class="badge n2">N2</span><h4>Upper-int.</h4></button>
-          <button class="level-pick-card" onclick="loadGame('N1')"><span class="badge n1">N1</span><h4>Advanced</h4></button>
-        </div>
+    <!-- VIDEO CATALOG GRID -->
+    <section class="video-catalog-section">
+      <div class="video-grid" id="videoGrid">
+        <!-- Dynamic video cards populated by dashboard.js -->
       </div>
-    </div>
-
-    <div id="gameUI" class="panel" style="display:none; padding:40px; text-align:center;">
-      <h2>Level: <span id="selectedLevel" style="color:var(--accent);">N5</span></h2>
-      <p style="color:var(--text-secondary); margin-bottom:24px;">Practice cards render here</p>
-      <button class="btn btn-ghost" onclick="goBackToDashboard()">← Back to Dashboard</button>
-    </div>
+    </section>
 
   </main>
-
-  <!-- RIGHT RAIL — mascot stays ONLY on home -->
-  <aside class="right-rail">
-    <div class="mascot-card panel">
-      <div class="mascot-head">
-        <h4>[MASCOT NAME]</h4>
-        <span class="lvl-badge">Lvl 0</span>
-      </div>
-      <div class="mascot-progress">0 / 25 correct</div>
-      <div class="mascot-art"></div>
-    </div>
-
-    <div class="quick-practice-card panel">
-      <h3>Quick Practice</h3>
-      <p>5 random cards from your weakest deck.</p>
-      <button class="btn btn-primary" id="quick-practice-btn" style="width:100%;">Start</button>
-    </div>
-  </aside>
 
 </div>
 

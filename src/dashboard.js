@@ -1,10 +1,80 @@
-// dashboard.js — Firestore integration unchanged, sidebar now mounted from icons.js
+// dashboard.js — Firestore integration & HayaiLearn video catalog logic
 
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { auth, requireAuth, renderAuthUI, signOutUser } from "/src/auth.js";
 import { mountSidebar } from "/src/icons.js";
 
 const db = getFirestore();
+
+// ---- Video Catalog Database (HayaiLearn-styled items) ----
+const videoLibrary = [
+  {
+    id: "1",
+    title: "Let's go hiking in Japan! ⛰️ | N4 Japanese Listening",
+    channel: "けんさんおかえりJapanese",
+    level: "LVL 3",
+    duration: "42:16",
+    comprehension: "15%",
+    category: "vlog",
+    youtubeId: "jfKfPfyJRdk",
+    thumbnail: "https://img.youtube.com/vi/jfKfPfyJRdk/hqdefault.jpg"
+  },
+  {
+    id: "2",
+    title: "[N5 - N4] 15-minute Japanese listening | Conversation practice",
+    channel: "Learn Easy Japanese with Kan...",
+    level: "LVL 3",
+    duration: "17:07",
+    comprehension: "15%",
+    category: "education",
+    youtubeId: "5qap5aO4i9A",
+    thumbnail: "https://img.youtube.com/vi/5qap5aO4i9A/hqdefault.jpg"
+  },
+  {
+    id: "3",
+    title: "今宵はめろんTUNE #42 | Japanese Music & Chat",
+    channel: "黒金メロイック Official",
+    level: "LVL 4",
+    duration: "31:20",
+    comprehension: "39%",
+    category: "music",
+    youtubeId: "dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+  },
+  {
+    id: "4",
+    title: "Japanese Mythology: Izanagi & Izanami — The Creation Story",
+    channel: "Get to Know Japan",
+    level: "LVL 4",
+    duration: "21:01",
+    comprehension: "48%",
+    category: "anime",
+    youtubeId: "3JZ_D3ELwOQ",
+    thumbnail: "https://img.youtube.com/vi/3JZ_D3ELwOQ/hqdefault.jpg"
+  },
+  {
+    id: "5",
+    title: "ATARASHII GAKKO! - Oi AG! (Official Music Video)",
+    channel: "88rising",
+    level: "LVL 4",
+    duration: "04:10",
+    comprehension: "32%",
+    category: "music",
+    youtubeId: "L-_N9_8x2Is",
+    thumbnail: "https://img.youtube.com/vi/L-_N9_8x2Is/hqdefault.jpg"
+  },
+  {
+    id: "6",
+    title: "Street Interview in Tokyo: How much is your outfit?",
+    channel: "Tokyo Street Clips",
+    level: "LVL 5",
+    duration: "20:01",
+    comprehension: "28%",
+    category: "street",
+    youtubeId: "L1vXy3C9vB0",
+    thumbnail: "https://img.youtube.com/vi/L1vXy3C9vB0/hqdefault.jpg"
+  }
+];
 
 // ---- Get current user or throw error ----
 function requireUser() {
@@ -13,14 +83,13 @@ function requireUser() {
   return user;
 }
 
-// ---- Firestore: Set user item ----
+// ---- Firestore Helpers ----
 export async function setUserItem(key, value) {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
   await setDoc(userRef, { [key]: value }, { merge: true });
 }
 
-// ---- Firestore: Get user item ----
 export async function getUserItem(key) {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
@@ -29,7 +98,6 @@ export async function getUserItem(key) {
   return snap.data()[key] ?? null;
 }
 
-// ---- Firestore: Get all user data ----
 export async function getUserData() {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
@@ -37,106 +105,111 @@ export async function getUserData() {
   return snap.exists() ? snap.data() : {};
 }
 
-// ---- Firestore: Update multiple fields ----
 export async function updateUserData(fields) {
   const user = requireUser();
   const userRef = doc(db, "users", user.uid);
   await setDoc(userRef, fields, { merge: true });
 }
 
-// ---- Save game progress ----
-export async function saveProgress(level, score) {
-  await updateUserData({ lastLevel: level, lastScore: score, updatedAt: Date.now() });
-}
-
-// ---- Load dashboard data ----
 export async function loadDashboard() {
   const data = await getUserData();
   return {
     level: data.lastLevel ?? "N5",
     score: data.lastScore ?? 0,
     streak: data.streak ?? 0,
-    settings: data.settings ?? {}
+    cardsReviewed: data.dailyGoalProgress ?? 0
   };
 }
 
-// ---- Update daily goal progress ----
-export async function updateDailyGoal(cardsReviewed) {
-  await updateUserData({
-    dailyGoalProgress: cardsReviewed,
-    lastReviewDate: new Date().toISOString().split("T")[0]
-  });
+// ---- Render Video Grid ----
+function renderVideos(filterCategory = "all") {
+  const grid = document.getElementById("videoGrid");
+  if (!grid) return;
+
+  const filtered = filterCategory === "all" 
+    ? videoLibrary 
+    : videoLibrary.filter(v => v.category === filterCategory);
+
+  grid.innerHTML = filtered.map(video => `
+    <div class="video-card" onclick="openVideoPlayer('${video.youtubeId}')">
+      <div class="thumbnail-container">
+        <span class="level-badge">${video.level}</span>
+        <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" />
+        <span class="duration-badge">${video.duration}</span>
+      </div>
+      <div class="video-info">
+        <h3 class="video-title">${video.title}</h3>
+        <p class="video-channel">${video.channel}</p>
+        <div class="comprehension-bar">
+          <span>💬 Comprehension: ${video.comprehension}</span>
+        </div>
+      </div>
+    </div>
+  `).join("");
 }
 
-// ---- Game modal wiring ----
-window.loadGame = function (level) {
-  const modal = document.getElementById("levelSelectModal");
-  if (modal) modal.style.display = "none";
-
-  const gameUI = document.getElementById("gameUI");
-  if (gameUI) {
-    gameUI.style.display = "block";
-    const selectedLevelEl = document.getElementById("selectedLevel");
-    if (selectedLevelEl) selectedLevelEl.textContent = level;
-    saveProgress(level, 0).catch(err => console.error("Failed to save progress:", err));
-  }
+// ---- Navigation Event ----
+window.openVideoPlayer = function(youtubeId) {
+  window.location.href = `reading.html?v=${youtubeId}`;
 };
 
-window.goBackToDashboard = function () {
-  const gameUI = document.getElementById("gameUI");
-  if (gameUI) gameUI.style.display = "none";
-};
-
-// ---- Initialize dashboard ----
+// ---- Initialize Dashboard ----
 document.addEventListener("DOMContentLoaded", async () => {
-  // Mount sidebar first so the page has nav immediately
+  // 1. Mount sidebar (CSS automatically hides bottom profile/theme from it)
   mountSidebar('home');
 
   try {
     const user = await requireAuth("index.html");
-    console.log("User authenticated:", user.email);
-
     renderAuthUI();
 
-    const dashboardData = await loadDashboard();
+    // 2. Populate User Profile Data in Top Bar
+    const displayNameEl = document.getElementById("user-display-name");
+    const displayEmailEl = document.getElementById("user-display-email");
+    const avatarEl = document.getElementById("profile-avatar-initial");
 
-    const dailyGoalNum = document.getElementById("daily-goal-num");
-    const dailyGoalRing = document.getElementById("daily-goal-ring");
-    if (dailyGoalNum && dailyGoalRing) {
-      const progress = dashboardData.score || 0;
-      dailyGoalNum.textContent = Math.min(progress, 15);
-      const circumference = 2 * Math.PI * 42;
-      const offset = circumference - (Math.min(progress, 15) / 15) * circumference;
-      dailyGoalRing.style.strokeDashoffset = offset;
-    }
+    const email = user.email || "user@example.com";
+    const name = user.displayName || email.split("@")[0];
 
-    const playBtn = document.getElementById("play-btn");
-    if (playBtn) {
-      playBtn.addEventListener("click", () => {
-        const modal = document.getElementById("levelSelectModal");
-        if (modal) modal.style.display = "flex";
+    if (displayNameEl) displayNameEl.textContent = name;
+    if (displayEmailEl) displayEmailEl.textContent = email;
+    if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
+
+    // 3. Load Firestore Stats into Header
+    const stats = await loadDashboard();
+    const streakEl = document.getElementById("user-streak");
+    const cardCountEl = document.getElementById("daily-card-count");
+
+    if (streakEl) streakEl.textContent = `${stats.streak} days`;
+    if (cardCountEl) cardCountEl.textContent = `${stats.cardsReviewed} / 15`;
+
+    // 4. Category Filter Buttons Wiring
+    const categoryContainer = document.getElementById("categoryContainer");
+    if (categoryContainer) {
+      categoryContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("category-pill")) {
+          document.querySelectorAll(".category-pill").forEach(btn => btn.classList.remove("active"));
+          e.target.classList.add("active");
+          const selectedCat = e.target.getAttribute("data-category");
+          renderVideos(selectedCat);
+        }
       });
     }
 
-    const previousGamesBtn = document.getElementById("previous-games-btn");
-    if (previousGamesBtn) {
-      previousGamesBtn.addEventListener("click", () => alert("Previous games feature coming soon!"));
-    }
-
-    const achievementsBtn = document.getElementById("achievements-btn");
-    if (achievementsBtn) {
-      achievementsBtn.addEventListener("click", () => alert("Achievements feature coming soon!"));
-    }
-
-    const quickPracticeBtn = document.getElementById("quick-practice-btn");
-    if (quickPracticeBtn) {
-      quickPracticeBtn.addEventListener("click", () => {
-        const modal = document.getElementById("levelSelectModal");
-        if (modal) modal.style.display = "flex";
+    // 5. Top Theme Toggle Logic
+    const themeBtn = document.getElementById("top-theme-toggle");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        const currentTheme = document.body.getAttribute("data-theme") || "dark";
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        document.body.setAttribute("data-theme", newTheme);
+        themeBtn.querySelector(".theme-text").textContent = newTheme === "dark" ? "Dark" : "Light";
+        themeBtn.querySelector(".theme-icon").textContent = newTheme === "dark" ? "🌙" : "☀️";
       });
     }
 
-    console.log("Dashboard initialized successfully");
+    // 6. Initial Render of Videos
+    renderVideos("all");
+
   } catch (err) {
     console.error("Dashboard initialization error:", err);
     window.location.href = "index.html";
