@@ -3,9 +3,9 @@
 //   hiragana.json / katakana.json -> [{ kana, romaji, row, col }, ...]
 //   numbers.json                 -> [{ kanji, romaji, hiragana, meaning }, ...]
 
-import { requireAuth } from 'src/auth.js';
-import { getUserData, updateUserData } from 'src/dashboard.jsx';
-import { mountSidebar } from 'src/icons.js';
+import { requireAuth } from './src/auth.js';
+import { getUserData, updateUserData } from './src/dashboard.jsx';
+import { mountSidebar } from './src/icons.js';
 
 const MODULES = [
   { id: 'hiragana', label: 'Hiragana', file: 'data/kanji/hiragana.json', total: 46, type: 'kana' },

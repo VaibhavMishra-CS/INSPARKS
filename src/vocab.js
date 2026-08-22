@@ -1,4 +1,4 @@
-import { mountSidebar } from 'src/icons.js';
+import { mountSidebar } from './src/icons.js';
 
 // STATE
 let currentMode = 'vocab';

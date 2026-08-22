@@ -1,5 +1,5 @@
 // landing.js - Final version with correct imports
-import { signInWithGoogle, signInWithEmail, signUpWithEmail, watchAuthState } from "src/auth.js";
+import { signInWithGoogle, signInWithEmail, signUpWithEmail, watchAuthState } from "./src/auth.js";
 
 const DASHBOARD_URL = "/dashboard.html";
 
