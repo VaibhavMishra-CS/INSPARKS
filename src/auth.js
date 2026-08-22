@@ -1,4 +1,5 @@
-// auth.js - Complete rewrite with proper error handling and mobile support
+// auth.js — Firebase auth only. No menu/theme rendering lives here anymore;
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
 import {
@@ -10,7 +11,6 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { bindThemeToggle } from "./theme.js";
 
 // Firebase config from vite.config.js __FIREBASE_CONFIG__
 const firebaseConfig = __FIREBASE_CONFIG__;
@@ -20,7 +20,6 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Configure Google Auth for both desktop and mobile
 googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
@@ -110,78 +109,6 @@ export function watchAuthState(callback) {
       console.log("User logged out");
     }
     callback(user);
-  });
-}
-
-// ---- Render user card and menu ----
-// Menu structure matches crackd.it's user-card dropdown:
-// View Profile / Light mode toggle / Switch account / Log out.
-export function renderAuthUI() {
-  const cardBtn = document.getElementById("user-card-btn");
-  const nameEl = document.getElementById("user-name");
-  const emailEl = document.getElementById("user-email");
-  const avatarEl = document.getElementById("user-avatar");
-  const menuEl = document.getElementById("user-menu");
-
-  if (!cardBtn || !nameEl || !emailEl || !menuEl) {
-    console.warn("Auth UI elements not found in DOM");
-    return;
-  }
-
-  watchAuthState((user) => {
-    if (!user) return;
-
-    nameEl.textContent = user.displayName || "Account";
-    emailEl.textContent = user.email || "";
-
-    if (avatarEl && user.photoURL) {
-      avatarEl.style.backgroundImage = `url(${user.photoURL})`;
-      avatarEl.style.backgroundSize = "cover";
-    }
-
-    menuEl.innerHTML = `
-      <a href="profile.html" class="user-menu-item" id="view-profile-btn">View Profile</a>
-      <div class="user-menu-item user-menu-toggle-row">
-        <span>Light mode</span>
-        <label class="theme-switch">
-          <input type="checkbox" id="theme-toggle-input" />
-          <span class="theme-switch-slider"></span>
-        </label>
-      </div>
-      <button id="switch-account-btn" class="user-menu-item">Switch account</button>
-      <button id="logout-btn" class="user-menu-item">Log out</button>
-    `;
-    menuEl.style.display = "none";
-
-    bindThemeToggle(document.getElementById("theme-toggle-input"));
-
-    document.getElementById("theme-toggle-input")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-
-    document.getElementById("switch-account-btn")?.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      menuEl.style.display = "none";
-      try {
-        await signInWithGoogle();
-      } catch (err) {
-        console.error("Switch account failed:", err);
-      }
-    });
-
-    document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      await signOutUser();
-    });
-  });
-
-  cardBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    menuEl.style.display = menuEl.style.display === "none" ? "block" : "none";
-  });
-
-  document.addEventListener("click", () => {
-    menuEl.style.display = "none";
   });
 }
 

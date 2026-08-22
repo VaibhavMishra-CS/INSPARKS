@@ -1,11 +1,11 @@
 /* ==========================================================================
-   THEME.CSS — Shared design tokens for all dashboard-style pages
+   THEME.CSS — Single light theme (white/blue), shared across dashboard pages.
+   Dark mode and theme toggling have been removed entirely.
    Link this AFTER style.css and BEFORE dashboard.css on every page that
    uses the sidebar (dashboard, vocab/kanji, reading, modules, mocks, etc.)
    ========================================================================== */
 
-:root,
-:root[data-theme="light"] {
+:root {
   --bg:            #FFFFFF;
   --bg-elevated:   #FFFFFF;
   --bg-card:       #FFFFFF;
@@ -29,36 +29,11 @@
   --card-shadow:    0 2px 10px rgba(18, 21, 26, 0.05);
 }
 
-:root[data-theme="dark"] {
-  --bg:            #0F1216;
-  --bg-elevated:   #171B21;
-  --bg-card:       #171B21;
-  --bg-card-hover: #1E232B;
-  --border:        #262C35;
-  --border-bright: #333B47;
-
-  --text-primary:   #F2F4F7;
-  --text-secondary: #A7B0BC;
-  --text-tertiary:  #6B7684;
-
-  --accent:         #22B8AE;
-  --accent-bright:  #2FCFC4;
-  --accent-navy:    #4C6FE0;
-  --accent-navy-bg: #1B2340;
-  --accent-gold:    #E8B84B;
-  --accent-green:   #34C285;
-  --accent-red:     #E8615F;
-
-  --sidebar-bg:     #171B21;
-  --card-shadow:    0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
 * { box-sizing: border-box; }
 
 body.dashboard-body {
   background: var(--bg);
   color: var(--text-primary);
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ========================================================================
@@ -82,7 +57,7 @@ body.dashboard-body {
 }
 
 /* ========================================================================
-   SIDEBAR
+   SIDEBAR (no footer — profile lives only in the top bar)
    ======================================================================== */
 .sidebar {
   background: var(--sidebar-bg);
@@ -113,7 +88,7 @@ body.dashboard-body {
   color: #fff; font-weight: 700; font-size: 14px;
 }
 
-.sidebar-nav { display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px; }
+.sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
 
 .nav-item {
   padding: 10px 14px;
@@ -133,7 +108,6 @@ body.dashboard-body {
 }
 .nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
 
-/* ACTIVE STATE = NAVY BLUE (not green) */
 .nav-item.active {
   background: var(--accent-navy);
   color: #fff;
@@ -165,91 +139,6 @@ body.dashboard-body {
   padding: 4px 14px 8px;
   font-weight: 700;
 }
-
-/* ========================================================================
-   SIDEBAR FOOTER — theme toggle + profile
-   ======================================================================== */
-.sidebar-footer {
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  position: relative;
-}
-
-.theme-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text-secondary);
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.theme-toggle-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-.theme-chevron { margin-left: auto; width: 14px; height: 14px; opacity: 0.6; }
-.theme-chevron svg { width: 14px; height: 14px; }
-
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  background: transparent;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-.user-card:hover { background: var(--bg-card-hover); }
-
-.avatar {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), var(--accent-bright));
-  flex-shrink: 0;
-}
-.user-card-text { flex: 1; min-width: 0; }
-.user-name {
-  font-weight: 600; font-size: 13.5px; color: var(--text-primary);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.user-plan { font-size: 12px; color: var(--text-tertiary); }
-.user-card-chevron { width: 14px; height: 14px; color: var(--text-tertiary); flex-shrink: 0; }
-.user-card-chevron svg { width: 14px; height: 14px; }
-
-.user-menu {
-  display: none;
-  position: absolute;
-  bottom: 100%;
-  left: 0; right: 0;
-  margin-bottom: 8px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: var(--card-shadow);
-  overflow: hidden;
-  z-index: 100;
-}
-.user-menu.open { display: block; }
-.user-menu-item {
-  display: flex; align-items: center; gap: 10px;
-  width: 100%; padding: 11px 14px;
-  background: none; border: none;
-  color: var(--text-secondary);
-  cursor: pointer; font-family: inherit; font-size: 13.5px; text-align: left;
-  transition: background-color 0.15s ease;
-}
-.user-menu-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
 
 /* ========================================================================
    MAIN CONTENT / GENERIC CARD
