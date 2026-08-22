@@ -4,7 +4,7 @@
 //   numbers.json                 -> [{ kanji, romaji, hiragana, meaning }, ...]
 
 import { requireAuth } from './auth.js';
-import { getUserData, updateUserData } from './dashboard.js';
+import { getUserData, updateUserData } from './dashboard.jsx';
 import { mountSidebar } from './icons.js';
 
 const MODULES = [
