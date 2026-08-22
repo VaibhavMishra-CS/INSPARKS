@@ -1,11 +1,21 @@
-// modules.js — Books section: Hiragana, Katakana, Numbers
-// Data structure (confirmed from your files):
-//   hiragana.json / katakana.json -> [{ kana, romaji, row, col }, ...]
-//   numbers.json                 -> [{ kanji, romaji, hiragana, meaning }, ...]
-
 import { requireAuth } from './auth.js';
-import { getUserData, updateUserData } from './dashboard.jsx';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+import { auth } from './auth.js';
 import { mountSidebar } from './icons.js';
+const db = getFirestore();
+
+async function getUserData() {
+  const user = auth.currentUser;
+  if (!user) throw new Error('No user is signed in.');
+  const snap = await getDoc(doc(db, 'users', user.uid));
+  return snap.exists() ? snap.data() : {};
+}
+
+async function updateUserData(fields) {
+  const user = auth.currentUser;
+  if (!user) throw new Error('No user is signed in.');
+  await setDoc(doc(db, 'users', user.uid), fields, { merge: true });
+}
 
 const MODULES = [
   { id: 'hiragana', label: 'Hiragana', file: 'data/kanji/hiragana.json', total: 46, type: 'kana' },
