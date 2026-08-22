@@ -6,8 +6,8 @@
 <title>INSPARKS — Reading</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="src/style.css">
-<link rel="stylesheet" href="src/theme.css">
+<link rel="stylesheet" href="./src/style.css">
+<link rel="stylesheet" href="./src/theme.css">
 <style>
   /* Reading uses its own full-bleed layout inside #reading-root,
      since the library/detail views need a different shape than
@@ -38,11 +38,11 @@
   <div id="reading-root"></div>
 </div>
 
-<script type="module" src="src/icons.js" id="icons-loader"></script>
+<script type="module" src="./src/icons.js" id="icons-loader"></script>
 <script type="module">
-  import { mountSidebar } from 'src/icons.js';
+  import { mountSidebar } from './src/icons.js';
   mountSidebar('reading');
 </script>
-<script type="module" src="src/reading-main.jsx"></script>
+<script type="module" src="./src/reading-main.jsx"></script>
 </body>
 </html>
