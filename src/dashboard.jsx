@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { videoData } from './src/videoData.js';
-import { ICONS, getComprehensionFace, mountSidebar } from './src/icons.js';
-import { requireAuth, signOutUser, auth } from './src/auth.js';
+import { videoData } from './videoData.js';
+import { ICONS, getComprehensionFace, mountSidebar } from './icons.js';
+import { requireAuth, signOutUser, auth } from './auth.js';
 import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 import {
   getWatched, setWatched,
   getHiddenVideos, setHiddenVideos,
   getHiddenChannels, setHiddenChannels,
   getAlbum, setAlbum,
-} from './src/localStorageState.js';
+} from './localStorageState.js';
 import {
   CATEGORY_TABS, CATEGORY_TAXONOMY,
   LEVEL_OPTIONS, PROGRESS_OPTIONS, SUBTITLE_OPTIONS, DURATION_OPTIONS,
-} from './src/categoryTaxonomy.js';
+} from './categoryTaxonomy.js';
 
 const db = getFirestore();
 
