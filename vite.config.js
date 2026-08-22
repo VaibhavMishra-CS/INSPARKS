@@ -4,7 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  
+
   return {
     plugins: [react()],
     server: {
@@ -35,7 +35,8 @@ export default defineConfig(({ command, mode }) => {
         messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
         appId: env.VITE_FIREBASE_APP_ID,
         measurementId: env.VITE_FIREBASE_MEASUREMENT_ID
-      })
+      }),
+      __GEMINI_API_KEY__: JSON.stringify(env.VITE_GEMINI_API_KEY || '')
     }
   }
 })
